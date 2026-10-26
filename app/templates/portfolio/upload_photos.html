@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% block title %}Upload Photos{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Upload photos · {{ project.title }}</h1>
+  <form method="post" enctype="multipart/form-data">
+    <label>Photos (JPG or PNG, up to 10MB each)
+      <input type="file" name="photos" accept=".jpg,.jpeg,.png" multiple required>
+    </label>
+    <div class="row">
+      <button class="primary">Upload</button>
+      <a class="button" href="{{ url_for('portfolio.display_project', project_id=project.project_id) }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

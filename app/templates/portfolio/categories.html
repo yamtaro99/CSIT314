@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+{% block title %}Edit Categories{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Categories · {{ project.title }}</h1>
+  {% if categories %}
+  <form method="post">
+    <div class="checks">
+      {% for c in categories %}
+        <label class="check"><input type="checkbox" name="category_ids" value="{{ c.category_id }}" {% if c.category_id in selected %}checked{% endif %}> {{ c.name }}</label>
+      {% endfor %}
+    </div>
+    <div class="row">
+      <button class="primary">Save</button>
+      <a class="button" href="{{ url_for('portfolio.display_project', project_id=project.project_id) }}">Cancel</a>
+    </div>
+  </form>
+  {% else %}
+    <p class="empty">No categories are available yet. A Platform Manager needs to create them first.</p>
+  {% endif %}
+</div>
+{% endblock %}

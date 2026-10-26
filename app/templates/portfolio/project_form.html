@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block title %}{{ 'Edit Project' if project else 'Add Project' }}{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ 'Edit Project' if project else 'Add Project' }}</h1>
+  <form method="post">
+    <label>Title <input name="title" maxlength="120" value="{{ form.title }}" required></label>
+    <label>Description <textarea name="description" rows="5" required>{{ form.description }}</textarea></label>
+    <label>Location <input name="location" value="{{ form.location }}" required></label>
+    <label>Completion date <input type="date" name="completion_date" value="{{ form.completion_date }}" required></label>
+    <div class="row">
+      <button class="primary">Save</button>
+      <a class="button" href="{{ url_for('portfolio.display_project', project_id=project.project_id) if project else url_for('portfolio.display_portfolio') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+<p><a href="{{ url_for('portfolio.display_portfolio') }}">&larr; My Portfolio</a></p>
+<div class="page-head">
+  <h1>{{ project.title }}</h1>
+  <div class="row">
+    <a class="button" href="{{ url_for('portfolio.display_edit_project_form', project_id=project.project_id) }}">Edit</a>
+    <a class="button" href="{{ url_for('portfolio.display_upload_form', project_id=project.project_id) }}">Upload Photos</a>
+    <a class="button" href="{{ url_for('portfolio.display_category_selector', project_id=project.project_id) }}">Edit Categories</a>
+    <a class="button danger" href="{{ url_for('portfolio.confirm_remove_project', project_id=project.project_id) }}">Remove</a>
+  </div>
+</div>
+
+<p class="meta">{{ project.location }} · {{ 'Ongoing, completes' if project.is_ongoing() else 'Completed' }} {{ project.completion_date }}</p>
+<p>
+  {% for c in categories %}<span class="pill">{{ c.name }}</span>{% else %}<span class="muted">No categories yet</span>{% endfor %}
+</p>
+<p class="description">{{ project.description }}</p>
+
+<h2>Photos</h2>
+{% if photos %}
+  <div class="gallery">
+    {% for photo in photos %}<img src="{{ photo.file_url }}" alt="{{ photo.caption or project.title }}">{% endfor %}
+  </div>
+{% else %}
+  <p class="empty">No photos yet.</p>
+{% endif %}
+{% endblock %}

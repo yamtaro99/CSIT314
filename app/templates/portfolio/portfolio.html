@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}My Portfolio{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>My Portfolio</h1>
+  <a class="button primary" href="{{ url_for('portfolio.display_add_project_form') }}">Add Project</a>
+</div>
+
+{% if projects %}
+  <table class="list">
+    <thead><tr><th>Title</th><th>Location</th><th>Completion</th><th>Status</th><th></th></tr></thead>
+    <tbody>
+    {% for p in projects %}
+      <tr>
+        <td><a href="{{ url_for('portfolio.display_project', project_id=p.project_id) }}">{{ p.title }}</a></td>
+        <td>{{ p.location }}</td>
+        <td>{{ p.completion_date }}</td>
+        <td><span class="pill">{{ 'Ongoing' if p.is_ongoing() else 'Completed' }}</span></td>
+        <td class="actions">
+          <a href="{{ url_for('portfolio.display_edit_project_form', project_id=p.project_id) }}">Edit</a>
+          <a href="{{ url_for('portfolio.confirm_remove_project', project_id=p.project_id) }}">Remove</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">You have no projects yet. Add your first one to start showcasing your work.</p>
+{% endif %}
+{% endblock %}

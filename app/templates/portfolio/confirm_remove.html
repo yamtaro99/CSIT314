@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+{% block title %}Remove Project{% endblock %}
+{% block content %}
+<div class="card narrow">
+  <h1>Remove project?</h1>
+  <p><strong>{{ project.title }}</strong> will be hidden from customers and search results. Its view history is kept.</p>
+  <form method="post" class="row">
+    <button class="danger">Remove</button>
+    <a class="button" href="{{ url_for('portfolio.display_portfolio') }}">Cancel</a>
+  </form>
+</div>
+{% endblock %}
