@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block title %}Home{% endblock %}
+{% block content %}
+<h1>Welcome, {{ g.user.name }}</h1>
+
+{% if g.user.role == 'interior_designer' %}
+  <div class="tiles">
+    <a class="tile" href="{{ url_for('portfolio.display_portfolio') }}">
+      <strong>My Portfolio</strong><span>Add, edit, tag and remove projects</span>
+    </a>
+    <div class="tile todo"><strong>Company Information</strong><span>Not built yet</span></div>
+    <div class="tile todo"><strong>Project Interest</strong><span>Not built yet</span></div>
+  </div>
+{% elif g.user.role == 'customer' %}
+  <div class="tiles">
+    <div class="tile todo"><strong>Browse Projects</strong><span>Not built yet</span></div>
+    <div class="tile todo"><strong>My Favourites</strong><span>Not built yet</span></div>
+  </div>
+{% elif g.user.role == 'user_admin' %}
+  <div class="tiles">
+    <div class="tile todo"><strong>User Accounts</strong><span>Not built yet</span></div>
+    <div class="tile todo"><strong>ID Applications</strong><span>Not built yet</span></div>
+  </div>
+{% elif g.user.role == 'platform_manager' %}
+  <div class="tiles">
+    <div class="tile todo"><strong>Categories</strong><span>Not built yet</span></div>
+    <div class="tile todo"><strong>Reports</strong><span>Not built yet</span></div>
+  </div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>{% block title %}IDeal{% endblock %} · IDeal</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+  <header class="topbar">
+    <a class="brand" href="{{ url_for('home.index') }}">IDeal</a>
+    {% if g.user %}
+      <nav>
+        {% if g.user.role == 'interior_designer' %}
+          <a href="{{ url_for('portfolio.display_portfolio') }}">My Portfolio</a>
+        {% endif %}
+      </nav>
+      <div class="who">
+        <span>{{ g.user.name }} · {{ g.user.role.replace('_', ' ') | title }}</span>
+        <form method="post" action="{{ url_for('auth.logout') }}">
+          <button class="link">Log out</button>
+        </form>
+      </div>
+    {% endif %}
+  </header>
+
+  <main>
+    {% for category, message in get_flashed_messages(with_categories=true) %}
+      <div class="flash {{ category }}">{{ message }}</div>
+    {% endfor %}
+    {% block content %}{% endblock %}
+  </main>
+</body>
+</html>
