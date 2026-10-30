@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Pending ID Applications</h1>
+
+{% if applications %}
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Applied</th>
+    <th></th>
+  </tr>
+  {% for designer in applications %}
+  <tr>
+    <td>{{ designer.name }}</td>
+    <td>{{ designer.email }}</td>
+    <td>{{ designer.created_at }}</td>
+    <td>
+      <form method="post"
+            action="{{ url_for('application_review.approve_application', user_id=designer.user_id) }}">
+        <button type="submit">Approve</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% else %}
+<p>No pending applications.</p>
+{% endif %}
+{% endblock %}

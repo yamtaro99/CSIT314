@@ -19,3 +19,19 @@ class InteriorDesigner(UserAccount):
             (user_id, UserAccount.INTERIOR_DESIGNER),
         ).fetchone()
         return cls._from_row(row) if row else None
+
+    @classmethod
+    def find_pending(cls):
+        rows = get_db().execute(
+            "SELECT * FROM user_account WHERE role = ? AND status = 'pending' ORDER BY created_at",
+            (UserAccount.INTERIOR_DESIGNER,),
+        ).fetchall()
+        return [cls._from_row(row) for row in rows]
+
+    def set_status(self, status):
+        conn = get_db()
+        conn.execute("UPDATE user_account SET status = ? WHERE user_id = ?",
+                     (status, self.user_id))
+        conn.commit()
+        self.status = status
+        return True
