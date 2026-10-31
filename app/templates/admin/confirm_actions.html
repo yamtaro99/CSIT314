@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block content %}
+<h1>Confirm {{ action }}</h1>
+<p>Are you sure you want to {{ action }} the application from <strong>{{ designer.name }}</strong>?</p>
+
+<form method="post"
+      action="{{ url_for('admin.' ~ action ~ '_application', user_id=designer.user_id) }}">
+  <button type="submit">Yes, {{ action }}</button>
+  <a href="{{ url_for('admin.view_application_details', user_id=designer.user_id) }}">Cancel</a>
+</form>
+{% endblock %}
