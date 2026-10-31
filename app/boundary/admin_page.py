@@ -1,7 +1,9 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.boundary.session import login_required
+
 from app.control.admin_controllers import ViewApplicationController, ApproveApplicationController, RejectApplicationController
+
 from app.entity.user_account import UserAccount
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
