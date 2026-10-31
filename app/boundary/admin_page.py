@@ -41,7 +41,7 @@ class ApplicationReviewPage:
         return self.display_application_details(designer)
 
     def approve_application(self, user_id):
-        controller = ViewApplicationController()
+        controller = ApproveApplicationController()
         if controller.approve_application(user_id):
             self.display_success(f"Application approved for {controller.designer.name}")
             return self._to_list()
@@ -50,7 +50,7 @@ class ApplicationReviewPage:
         return self._to_list()
 
     def reject_application(self, user_id):
-        controller = ViewApplicationController()
+        controller = RejectApplicationController()
         if controller.reject_application(user_id):
             self.display_success(f"Application rejected for {controller.designer.name}")
             return self._to_list()

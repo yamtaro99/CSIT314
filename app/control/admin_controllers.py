@@ -69,5 +69,3 @@ class RequestAdditionalDocsController:
         # TODO: save the remarks once the database has a place for them
         return True
 
-class ApproveApplicationController:
-    pass
