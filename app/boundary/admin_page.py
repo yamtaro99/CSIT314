@@ -1,10 +1,10 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.boundary.session import login_required
-from app.control.id_application_controller import IDApplicationController
+from app.control.admin_controllers import IDApplicationController
 from app.entity.user_account import UserAccount
 
-bp = Blueprint("application_review", __name__, url_prefix="/admin/id-applications")
+bp = Blueprint("admin", __name__, url_prefix="/admin")
 admin_only = login_required(UserAccount.USER_ADMIN)
 
 
@@ -16,16 +16,16 @@ class ApplicationReviewPage:
         flash(msg, "error")
 
     def display_application(self, applications):
-        return render_template("application_review/review.html", applications=applications)
+        return render_template("admin/pending_applications.html", applications=applications)
 
     def display_application_details(self, designer):
-        return render_template("application_review/detail.html", designer=designer)
+        return render_template("admin/application_detail.html", designer=designer)
 
     def _to_list(self):
-        return redirect(url_for("application_review.view_id_applications"))
+        return redirect(url_for("admin.view_id_applications"))
 
     def _to_details(self, user_id):
-        return redirect(url_for("application_review.view_application_details", user_id=user_id))
+        return redirect(url_for("admin.view_application_details", user_id=user_id))
 
     def view_id_applications(self):
         applications = IDApplicationController().get_pending_application()

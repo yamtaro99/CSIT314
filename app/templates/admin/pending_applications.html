@@ -11,7 +11,7 @@
   </tr>
   {% for designer in applications %}
   <tr>
-    <td><a href="{{ url_for('application_review.view_application_details', user_id=designer.user_id) }}">{{ designer.name }}</a></td>
+    <td><a href="{{ url_for('admin.view_application_details', user_id=designer.user_id) }}">{{ designer.name }}</a></td>
     <td>{{ designer.email }}</td>
     <td>{{ designer.created_at }}</td>
   </tr>

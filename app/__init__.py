@@ -26,12 +26,12 @@ def create_app(test_config=None):
     from app.boundary.auth_page import bp as auth_bp
     from app.boundary.home_page import bp as home_bp
     from app.boundary.portfolio_page import bp as portfolio_bp
-    from app.boundary.application_review import bp as application_review_bp
+    from app.boundary.admin_page import bp as admin_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(portfolio_bp)
-    app.register_blueprint(application_review_bp)
+    app.register_blueprint(admin_bp)
 
     @app.route("/uploads/<path:filename>")
     def uploaded_file(filename):

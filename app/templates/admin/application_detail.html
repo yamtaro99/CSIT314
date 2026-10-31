@@ -1,6 +1,6 @@
 {% extends "base.html" %}
 {% block content %}
-<p><a href="{{ url_for('application_review.view_id_applications') }}">&larr; Back to pending applications</a></p>
+<p><a href="{{ url_for('admin.view_id_applications') }}">&larr; Back to pending applications</a></p>
 
 <h1>{{ designer.name }}</h1>
 <dl>
@@ -9,15 +9,15 @@
   <dt>Status</dt><dd>{{ designer.status }}</dd>
 </dl>
 
-<form method="post" action="{{ url_for('application_review.approve_application', user_id=designer.user_id) }}">
+<form method="post" action="{{ url_for('admin.approve_application', user_id=designer.user_id) }}">
   <button type="submit">Approve</button>
 </form>
 
-<form method="post" action="{{ url_for('application_review.reject_application', user_id=designer.user_id) }}">
+<form method="post" action="{{ url_for('admin.reject_application', user_id=designer.user_id) }}">
   <button type="submit">Reject</button>
 </form>
 
-<form method="post" action="{{ url_for('application_review.request_additional_docs', user_id=designer.user_id) }}">
+<form method="post" action="{{ url_for('admin.request_additional_docs', user_id=designer.user_id) }}">
   <label for="remarks">Request additional documents</label><br>
   <textarea id="remarks" name="remarks" rows="3" required></textarea><br>
   <button type="submit">Send request</button>
