@@ -1,7 +1,7 @@
 from flask import Blueprint, flash, redirect, render_template, request, url_for
 
 from app.boundary.session import login_required
-from app.control.admin_controllers import IDApplicationController
+from app.control.admin_controllers import ViewApplicationController
 from app.entity.user_account import UserAccount
 
 bp = Blueprint("admin", __name__, url_prefix="/admin")
@@ -28,18 +28,18 @@ class ApplicationReviewPage:
         return redirect(url_for("admin.view_application_details", user_id=user_id))
 
     def view_id_applications(self):
-        applications = IDApplicationController().get_pending_application()
+        applications = ViewApplicationController().get_pending_application()
         return self.display_application(applications)
 
     def view_application_details(self, user_id):
-        designer = IDApplicationController().get_application(user_id)
+        designer = ViewApplicationController().get_application(user_id)
         if designer is None:
             self.display_error("Application not found or no longer pending")
             return self._to_list()
         return self.display_application_details(designer)
 
     def approve_application(self, user_id):
-        controller = IDApplicationController()
+        controller = ViewApplicationController()
         if controller.approve_application(user_id):
             self.display_success(f"Application approved for {controller.designer.name}")
             return self._to_list()
@@ -48,7 +48,7 @@ class ApplicationReviewPage:
         return self._to_list()
 
     def reject_application(self, user_id):
-        controller = IDApplicationController()
+        controller = ViewApplicationController()
         if controller.reject_application(user_id):
             self.display_success(f"Application rejected for {controller.designer.name}")
             return self._to_list()
@@ -57,7 +57,7 @@ class ApplicationReviewPage:
         return self._to_list()
 
     def request_additional_docs(self, user_id):
-        controller = IDApplicationController()
+        controller = ViewApplicationController()
         if controller.request_additional_docs(user_id, request.form.get("remarks", "")):
             self.display_success(f"Additional documents requested from {controller.designer.name}")
             return self._to_details(user_id)

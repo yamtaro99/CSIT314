@@ -1,7 +1,7 @@
 from app.entity.interior_designer import InteriorDesigner
 
 
-class IDApplicationController:
+class ViewApplicationController:
     def __init__(self):
         self.errors = []
         self.designer = None
@@ -46,3 +46,6 @@ class IDApplicationController:
         self.designer = designer
         # TODO: save the remarks once the database has a place for them
         return True
+
+class ApproveApplicationController:
+    pass
