@@ -1,4 +1,5 @@
 from app.entity.interior_designer import InteriorDesigner
+from app.entity.company import Company
 
 
 def _find_pending(user_id):
@@ -21,6 +22,9 @@ class ViewApplicationController:
         if designer is None:
             self.errors.append("Application not found or no longer pending")
         return designer
+    
+    def get_company (self, user_id):
+        return Company.find_by_designer(user_id)
 
 
 class ApproveApplicationController:

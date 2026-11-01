@@ -20,14 +20,16 @@ class ApplicationReviewPage:
         return render_template("admin/pending_applications.html", applications=applications)
 
     def view_application_details(self, user_id):
-        designer = ViewApplicationController().get_application(user_id)
+        controller = ViewApplicationController()
+        designer = controller.get_application(user_id)
         if designer is None:
             self.display_error("Application not found or no longer pending")
             return self._to_list()
-        return self.display_application_details(designer)
+        company = controller.get_company(user_id)
+        return self.display_application_details(designer, company)
 
-    def display_application_details(self, designer):
-        return render_template("admin/application_detail.html", designer=designer)
+    def display_application_details(self, designer, company):
+        return render_template("admin/application_detail.html", designer=designer, company = company)
 
     def _to_list(self):
         return redirect(url_for("admin.view_id_applications"))

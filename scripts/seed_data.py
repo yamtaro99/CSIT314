@@ -90,6 +90,23 @@ def seed_projects(conn):
                              (cur.lastrowid, category_id))
 
 
+def seed_companies(conn):
+    designers = conn.execute(
+        "SELECT user_id FROM user_account WHERE role = 'interior_designer'").fetchall()
+    rows = [
+        (d["user_id"], f"UEN{d['user_id']:06d}A",
+         f"{RNG.randint(1, 200)} {RNG.choice(LOCATIONS)} Road",
+         f"6{RNG.randint(1000000, 9999999)}",
+         RNG.choice(["Residential interior design", "Commercial fit-out specialists",
+                     "Renovation and space planning"]),
+         rand_dt(365))
+        for d in designers
+    ]
+    conn.executemany(
+        "INSERT INTO company (designer_id, registration_no, address, phone, description, created_at)"
+        " VALUES (?, ?, ?, ?, ?, ?)", rows)
+
+
 def main():
     app = create_app()
     with app.app_context():
@@ -97,6 +114,7 @@ def main():
         conn = get_db()
         pw_hash = generate_password_hash(SEED_PASSWORD)
         seed_accounts(conn, pw_hash)
+        seed_companies(conn)
         seed_categories(conn)
         seed_projects(conn)
         conn.commit()
