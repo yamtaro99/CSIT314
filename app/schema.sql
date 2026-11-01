@@ -62,7 +62,7 @@ CREATE TABLE project_category (
 CREATE TABLE company (
     company_id      INTEGER PRIMARY KEY AUTOINCREMENT,
     designer_id     INTEGER NOT NULL UNIQUE REFERENCES user_account (user_id),
-    registration_no TEXT    NOT NULL,
+    registration_no TEXT    NOT NULL UNIQUE,
     address         TEXT    NOT NULL DEFAULT '',
     phone           TEXT    NOT NULL DEFAULT '',
     description     TEXT    NOT NULL DEFAULT '',
