@@ -29,6 +29,14 @@ class UserAccount:
     def is_active(self):
         return self.status == "active"
 
+    def set_status(self, status):
+        conn = get_db()
+        conn.execute("UPDATE user_account SET status = ? WHERE user_id = ?",
+                     (status, self.user_id))
+        conn.commit()
+        self.status = status
+        return True
+
     def create(self):
         if self.role not in self.ROLES or not self.password_hash:
             return False
