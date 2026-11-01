@@ -28,10 +28,3 @@ class InteriorDesigner(UserAccount):
         ).fetchall()
         return [cls._from_row(row) for row in rows]
 
-    def set_status(self, status):
-        conn = get_db()
-        conn.execute("UPDATE user_account SET status = ? WHERE user_id = ?",
-                     (status, self.user_id))
-        conn.commit()
-        self.status = status
-        return True

@@ -4,6 +4,8 @@ DROP TABLE IF EXISTS project_photo;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user_account;
+DROP TABLE IF EXISTS company;
+
 PRAGMA foreign_keys = ON;
 
 -- User Admin
@@ -57,6 +59,14 @@ CREATE TABLE project_category (
 );
 
 -- ID Company Information
+CREATE TABLE company (
+    company_id      INTEGER PRIMARY KEY AUTOINCREMENT,
+    designer_id     INTEGER NOT NULL UNIQUE REFERENCES user_account (user_id),
+    registration_no TEXT    NOT NULL UNIQUE,
+    address         TEXT    NOT NULL DEFAULT '',
+    phone           TEXT    NOT NULL DEFAULT '',
+    description     TEXT    NOT NULL DEFAULT ''
+);
 
 -- Customer Project Interaction
 

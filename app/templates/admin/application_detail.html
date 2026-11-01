@@ -9,6 +9,20 @@
   <dt>Status</dt><dd>{{ designer.status }}</dd>
 </dl>
 
+<h2>Company details</h2>
+<dl>
+  <dt>Studio / Company name</dt><dd>{{ designer.name }}</dd>
+  {% if company %}
+  <dt>Registration no.</dt><dd>{{ company.registration_no }}</dd>
+  <dt>Address</dt><dd>{{ company.address }}</dd>
+  <dt>Phone</dt><dd>{{ company.phone }}</dd>
+  <dt>Description</dt><dd>{{ company.description }}</dd>
+  {% endif %}
+</dl>
+{% if not company %}
+<p>No further company details submitted.</p>
+{% endif %}
+
 <form method="get" action="{{ url_for('admin.approve_application', user_id=designer.user_id) }}">
   <button type="submit">Approve</button>
 </form>
