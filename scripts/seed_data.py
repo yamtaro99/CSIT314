@@ -98,13 +98,12 @@ def seed_companies(conn):
          f"{RNG.randint(1, 200)} {RNG.choice(LOCATIONS)} Road",
          f"6{RNG.randint(1000000, 9999999)}",
          RNG.choice(["Residential interior design", "Commercial fit-out specialists",
-                     "Renovation and space planning"]),
-         rand_dt(365))
+                     "Renovation and space planning"]))
         for d in designers
     ]
     conn.executemany(
-        "INSERT INTO company (designer_id, registration_no, address, phone, description, created_at)"
-        " VALUES (?, ?, ?, ?, ?, ?)", rows)
+        "INSERT INTO company (designer_id, registration_no, address, phone, description)"
+        " VALUES (?, ?, ?, ?, ?)", rows)
 
 
 def main():

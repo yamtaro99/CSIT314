@@ -65,8 +65,7 @@ CREATE TABLE company (
     registration_no TEXT    NOT NULL UNIQUE,
     address         TEXT    NOT NULL DEFAULT '',
     phone           TEXT    NOT NULL DEFAULT '',
-    description     TEXT    NOT NULL DEFAULT '',
-    created_at      TEXT    NOT NULL
+    description     TEXT    NOT NULL DEFAULT ''
 );
 
 -- Customer Project Interaction
