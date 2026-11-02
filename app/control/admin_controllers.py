@@ -17,15 +17,6 @@ class ViewApplicationController:
     def get_pending_application(self):
         return InteriorDesigner.find_pending()
 
-    def get_application(self, user_id):
-        designer = _find_pending(user_id)
-        if designer is None:
-            self.errors.append("Application not found or no longer pending")
-        return designer
-    
-    def get_company (self, user_id):
-        return Company.find_by_designer(user_id)
-
 
 class ApproveApplicationController:
     def __init__(self):
