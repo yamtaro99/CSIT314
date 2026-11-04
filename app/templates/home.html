@@ -8,7 +8,9 @@
     <a class="tile" href="{{ url_for('portfolio.display_portfolio') }}">
       <strong>My Portfolio</strong><span>Add, edit, tag and remove projects</span>
     </a>
-    <div class="tile todo"><strong>Company Information</strong><span>Not built yet</span></div>
+    <a class="tile" href="{{ url_for('consultation.view_calendar') }}">
+      <strong>Consultation Availability</strong><span>Set and manage your open time slots</span>
+    </a>
     <div class="tile todo"><strong>Project Interest</strong><span>Not built yet</span></div>
   </div>
 {% elif g.user.role == 'customer' %}

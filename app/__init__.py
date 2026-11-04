@@ -27,11 +27,15 @@ def create_app(test_config=None):
     from app.boundary.home_page import bp as home_bp
     from app.boundary.portfolio_page import bp as portfolio_bp
     from app.boundary.admin_page import bp as admin_bp
+    # Import your consultation blueprint
+    from app.boundary.consultation_page import bp as consultation_bp
 
     app.register_blueprint(auth_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(portfolio_bp)
     app.register_blueprint(admin_bp)
+    # Register the blueprint with the app
+    app.register_blueprint(consultation_bp)
 
     @app.route("/uploads/<path:filename>")
     def uploaded_file(filename):

@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Set Consultation Available Times{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Set Consultation Available Times</h1>
+</div>
+
+<!-- Form Card -->
+<div class="card" style="margin-bottom: 30px;">
+  <h2>Add New Time Slot</h2>
+  <form method="post" action="{{ url_for('consultation.set_availability') }}">
+    <label>Date <input type="date" name="date" required></label>
+    <label>Start Time <input type="time" name="start_time" required></label>
+    
+    <label>Duration
+      <select name="duration" required style="display: block; width: 100%; margin-top: 4px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; background: #fff;">
+        <option value="1">1 Hour</option>
+        <option value="2">2 Hours</option>
+      </select>
+    </label>
+
+    <div class="row" style="margin-top: 16px;">
+      <button class="primary">Save Slot</button>
+    </div>
+  </form>
+</div>
+
+<!-- Current Slots Table -->
+<h2>Current Availability Slots</h2>
+{% if slots %}
+  <table class="list">
+    <thead>
+      <tr>
+        <th>Date</th>
+        <th>Start Time</th>
+        <th>End Time</th>
+        <th>Status</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for slot in slots %}
+      <tr>
+        <td>{{ slot.date }}</td>
+        <td>{{ slot.startTime }}</td>
+        <td>{{ slot.endTime }}</td>
+        <td><span class="pill">{{ 'Booked' if slot.isBooked else 'Open' }}</span></td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">You have no availability slots set yet. Add your first one above.</p>
+{% endif %}
+{% endblock %}

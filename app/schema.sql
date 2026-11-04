@@ -67,6 +67,15 @@ CREATE TABLE company (
     phone           TEXT    NOT NULL DEFAULT '',
     description     TEXT    NOT NULL DEFAULT ''
 );
+CREATE TABLE IF NOT EXISTS consultation_slot (
+    slot_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    designer_id INTEGER NOT NULL,
+    date TEXT NOT NULL,
+    start_time TEXT NOT NULL,
+    end_time TEXT NOT NULL,
+    is_booked INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (designer_id) REFERENCES user_account (user_id)
+);
 
 -- Customer Project Interaction
 

@@ -13,6 +13,7 @@
       <nav>
         {% if g.user.role == 'interior_designer' %}
           <a href="{{ url_for('portfolio.display_portfolio') }}">My Portfolio</a>
+          <a href="{{ url_for('consultation.view_calendar') }}">Consultation Availability</a>
         {% endif %}
       </nav>
       <div class="who">
