@@ -8,27 +8,8 @@ class ConsultationSlot:
         self.endTime = endTime
         self.isBooked = bool(isBooked)
 
-    @classmethod
-    def init_table(cls):
-        """Ensures the consultation_slot table exists in the database."""
-        conn = get_db()
-        conn.execute("""
-            CREATE TABLE IF NOT EXISTS consultation_slot (
-                slot_id INTEGER PRIMARY KEY AUTOINCREMENT,
-                designer_id INTEGER NOT NULL,
-                date TEXT NOT NULL,
-                start_time TEXT NOT NULL,
-                end_time TEXT NOT NULL,
-                is_booked INTEGER NOT NULL DEFAULT 0,
-                FOREIGN KEY (designer_id) REFERENCES user_account (user_id)
-            );
-        """)
-        conn.commit()
-
     def create(self, designer_id):
         """Persists a new consultation slot associated with an interior designer."""
-        cls = self.__class__
-        cls.init_table()
         conn = get_db()
         cur = conn.execute(
             "INSERT INTO consultation_slot (designer_id, date, start_time, end_time, is_booked) "
@@ -74,7 +55,6 @@ class ConsultationSlot:
     @classmethod
     def get_slots_by_designer(cls, designer_id):
         """Fetches all consultation slots created by a specific interior designer."""
-        cls.init_table()
         rows = get_db().execute(
             "SELECT * FROM consultation_slot WHERE designer_id = ? ORDER BY date ASC, start_time ASC",
             (designer_id,)

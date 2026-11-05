@@ -11,6 +11,9 @@
     <a class="tile" href="{{ url_for('consultation.view_calendar') }}">
       <strong>Consultation Availability</strong><span>Set and manage your open time slots</span>
     </a>
+    <a class="tile" href="{{ url_for('reviews.view_pending_reviews') }}">
+      <strong>Client Reviews</strong><span>Review and publish submitted client reviews</span>
+    </a>
     <div class="tile todo"><strong>Project Interest</strong><span>Not built yet</span></div>
   </div>
 {% elif g.user.role == 'customer' %}

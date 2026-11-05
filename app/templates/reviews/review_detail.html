@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block title %}Review Details{% endblock %}
+
+{% block content %}
+<p><a href="{{ url_for('reviews.view_pending_reviews') }}">&larr; Back to pending reviews</a></p>
+
+<div class="card narrow" style="max-width: 600px;">
+  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+    <h1>Client Review Details</h1>
+    <!-- Visual Status Badge -->
+    <span class="pill {{ 'success' if review.status == 'approved' else ('danger' if review.status == 'rejected' else 'warning') }}" 
+          style="text-transform: uppercase; font-weight: bold; font-size: 0.85rem;">
+      {{ review.status }}
+    </span>
+  </div>
+
+  <dl style="margin-bottom: 24px;">
+    <dt><strong>Rating:</strong></dt>
+    <dd style="font-size: 1.2rem; margin-bottom: 12px;">⭐ {{ review.rating }} / 5 Stars</dd>
+
+    <dt><strong>Comment:</strong></dt>
+    <dd class="description" style="background: var(--bg); padding: 12px; border-radius: 8px; margin-bottom: 12px;">{{ review.comment }}</dd>
+
+    <dt><strong>Submitted At:</strong></dt>
+    <dd>{{ review.submittedAt }}</dd>
+  </dl>
+
+  {% if review.status == 'pending' %}
+    <div class="row" style="gap: 12px;">
+      <form method="post" action="{{ url_for('reviews.approve_review', review_id=review.reviewId) }}">
+        <button class="primary">Approve & Publish</button>
+      </form>
+
+      <form method="post" action="{{ url_for('reviews.reject_review', review_id=review.reviewId) }}">
+        <button class="danger">Reject</button>
+      </form>
+
+      <a class="button" href="{{ url_for('reviews.view_pending_reviews') }}">Back</a>
+    </div>
+  {% else %}
+    <div class="alert success" style="margin-top: 16px;">
+      This review is <strong>{{ review.status }}</strong> and is currently visible to website visitors.
+    </div>
+  {% endif %}
+</div>
+{% endblock %}

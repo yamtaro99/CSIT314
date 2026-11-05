@@ -27,9 +27,10 @@ def create_app(test_config=None):
     from app.boundary.home_page import bp as home_bp
     from app.boundary.portfolio_page import bp as portfolio_bp
     from app.boundary.admin_page import bp as admin_bp
-    # Import your consultation blueprint
     from app.boundary.consultation_page import bp as consultation_bp
-
+    from app.boundary.review_page import bp as review_bp
+    
+    app.register_blueprint(review_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(home_bp)
     app.register_blueprint(portfolio_bp)

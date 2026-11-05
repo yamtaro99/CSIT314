@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+{% block title %}Pending Client Reviews{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Pending Client Reviews</h1>
+</div>
+
+{% if reviews %}
+  <table class="list">
+    <thead>
+      <tr>
+        <th>Rating</th>
+        <th>Comment Preview</th>
+        <th>Submitted At</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for review in reviews %}
+      <tr>
+        <td>⭐ {{ review.rating }} / 5</td>
+        <td>{{ review.comment[:50] }}...</td>
+        <td>{{ review.submittedAt }}</td>
+        <td class="actions">
+          <a class="button primary" href="{{ url_for('reviews.view_review_details', review_id=review.reviewId) }}">Review Details</a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">No pending client reviews waiting for approval.</p>
+{% endif %}
+{% endblock %}

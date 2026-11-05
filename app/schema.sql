@@ -5,6 +5,8 @@ DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user_account;
 DROP TABLE IF EXISTS company;
+DROP TABLE IF EXISTS consultation_slot;
+DROP TABLE IF EXISTS customer_review;
 
 PRAGMA foreign_keys = ON;
 
@@ -67,13 +69,27 @@ CREATE TABLE company (
     phone           TEXT    NOT NULL DEFAULT '',
     description     TEXT    NOT NULL DEFAULT ''
 );
-CREATE TABLE IF NOT EXISTS consultation_slot (
+
+-- UC-21 Consultation Slots
+CREATE TABLE consultation_slot (
     slot_id INTEGER PRIMARY KEY AUTOINCREMENT,
     designer_id INTEGER NOT NULL,
     date TEXT NOT NULL,
     start_time TEXT NOT NULL,
     end_time TEXT NOT NULL,
     is_booked INTEGER NOT NULL DEFAULT 0,
+    FOREIGN KEY (designer_id) REFERENCES user_account (user_id)
+);
+
+-- UC-20 Customer Client Reviews
+CREATE TABLE customer_review (
+    review_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    designer_id INTEGER NOT NULL,
+    client_id INTEGER,
+    rating INTEGER NOT NULL,
+    comment TEXT NOT NULL,
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+    submitted_at TEXT NOT NULL,
     FOREIGN KEY (designer_id) REFERENCES user_account (user_id)
 );
 
