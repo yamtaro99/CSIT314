@@ -44,3 +44,14 @@ def set_availability():
         display_error(err)
     
     return redirect(url_for("consultation.view_calendar"))
+
+@bp.route("/availability/<int:slot_id>/delete", methods=["POST"])
+@designer_only
+def delete_slot(slot_id):
+    controller = SetAvailabilityController()
+    if controller.delete_slot(g.user.user_id, slot_id):
+        display_success("Open consultation slot removed.")
+    else:
+        for err in controller.errors:
+            display_error(err)
+    return redirect(url_for("consultation.view_calendar"))

@@ -50,3 +50,10 @@ class SetAvailabilityController:
         except (ValueError, TypeError):
             self.errors = ["Invalid date or time format provided."]
             return False
+
+    def delete_slot(self, designer_id, slot_id):
+        self.errors = []
+        if not ConsultationSlot.delete_open(slot_id, designer_id):
+            self.errors.append("This slot could not be removed. It may already be booked or no longer exist.")
+            return False
+        return True

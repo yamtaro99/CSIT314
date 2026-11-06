@@ -60,3 +60,14 @@ class ConsultationSlot:
             (designer_id,)
         ).fetchall()
         return [cls._from_row(r) for r in rows]
+
+    @classmethod
+    def delete_open(cls, slot_id, designer_id):
+        """Deletes a slot only if it belongs to the designer and is not booked."""
+        conn = get_db()
+        cur = conn.execute(
+            "DELETE FROM consultation_slot WHERE slot_id = ? AND designer_id = ? AND is_booked = 0",
+            (slot_id, designer_id)
+        )
+        conn.commit()
+        return cur.rowcount > 0

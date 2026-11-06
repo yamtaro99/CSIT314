@@ -36,6 +36,7 @@
         <th>Start Time</th>
         <th>End Time</th>
         <th>Status</th>
+        <th>Action</th>
       </tr>
     </thead>
     <tbody>
@@ -45,6 +46,13 @@
         <td>{{ slot.startTime }}</td>
         <td>{{ slot.endTime }}</td>
         <td><span class="pill">{{ 'Booked' if slot.isBooked else 'Open' }}</span></td>
+        <td>
+          {% if not slot.isBooked %}
+          <form method="post" action="{{ url_for('consultation.delete_slot', slot_id=slot.slotId) }}" style="margin:0;">
+            <button type="submit">Delete</button>
+          </form>
+          {% endif %}
+        </td>
       </tr>
     {% endfor %}
     </tbody>
