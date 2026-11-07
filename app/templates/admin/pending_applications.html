@@ -13,7 +13,7 @@
   <tr>
     <td><a href="{{ url_for('admin.view_application_details', user_id=designer.user_id) }}">{{ designer.name }}</a></td>
     <td>{{ designer.email }}</td>
-    <td>{{ designer.created_at }}</td>
+    <td>{{ designer.created_at.replace('T', ' ') }}</td>
   </tr>
   {% endfor %}
 </table>
