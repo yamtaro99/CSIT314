@@ -48,3 +48,20 @@ class CustomerReview:
             (review_id,)
         ).fetchone()
         return cls._from_row(row) if row else None
+    
+    @classmethod
+    def find_approved(cls):
+        """Fetches approved reviews, newest first, with the designer's name attached."""
+        rows = get_db().execute(
+            "SELECT r.*, u.name AS designer_name "
+            "FROM customer_review r "
+            "LEFT JOIN user_account u ON u.user_id = r.designer_id "
+            "WHERE r.status = 'approved' "
+            "ORDER BY r.submitted_at DESC"
+        ).fetchall()
+        reviews = []
+        for row in rows:
+            review = cls._from_row(row)
+            review.designer_name = row["designer_name"]
+            reviews.append(review)
+        return reviews

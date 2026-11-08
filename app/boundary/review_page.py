@@ -55,3 +55,12 @@ def reject_review(review_id):
         for err in controller.errors:
             display_error(err)
     return redirect(url_for("reviews.view_pending_reviews"))
+
+@bp.route("/approved", methods=["GET"])
+def view_approved_reviews():
+    """Public page listing all approved reviews for customers to read."""
+    controller = ReviewController()
+    reviews = controller.get_approved_reviews()
+    average = round(sum(r.rating for r in reviews) / len(reviews), 1) if reviews else None
+    return render_template("reviews/approved_reviews.html", reviews=reviews, average=average)
+

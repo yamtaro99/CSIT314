@@ -1,31 +1,23 @@
 {% extends "base.html" %}
-
 {% block content %}
 <h1>Pending ID Applications</h1>
 
 {% if applications %}
-<table style="border-spacing: 25px 10px;">
-    <tr>
-        <th>Name</th>
-        <th>Email</th>
-        <th>Applied</th>
-    </tr>
-
-    {% for designer in applications %}
-    <tr>
-        <td>
-            <a href="{{ url_for('admin.view_application_details', user_id=designer.user_id) }}">
-                {{ designer.name }}
-            </a>
-        </td>
-        <td>{{ designer.email }}</td>
-        <td>{{ designer.created_at.replace('T', ' ') }}</td>
-    </tr>
-    {% endfor %}
+<table>
+  <tr>
+    <th>Name</th>
+    <th>Email</th>
+    <th>Applied</th>
+  </tr>
+  {% for designer in applications %}
+  <tr>
+    <td><a href="{{ url_for('admin.view_application_details', user_id=designer.user_id) }}">{{ designer.name }}</a></td>
+    <td>{{ designer.email }}</td>
+    <td>{{ designer.created_at }}</td>
+  </tr>
+  {% endfor %}
 </table>
-
 {% else %}
 <p>No pending applications.</p>
 {% endif %}
-
 {% endblock %}

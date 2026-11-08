@@ -29,3 +29,7 @@ class ReviewController:
         if not review:
             return False
         return review.set_status("rejected")
+
+    def get_approved_reviews(self):
+        """Returns all approved reviews to be shown publicly."""
+        return CustomerReview.find_approved()

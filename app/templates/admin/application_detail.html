@@ -1,98 +1,39 @@
 {% extends "base.html" %}
-
 {% block content %}
-
-<p>
-    <a href="{{ url_for('admin.view_id_applications') }}">
-        &larr; Back to pending applications
-    </a>
-</p>
+<p><a href="{{ url_for('admin.view_id_applications') }}">&larr; Back to pending applications</a></p>
 
 <h1>{{ designer.name }}</h1>
+<dl>
+  <dt>Email</dt><dd>{{ designer.email }}</dd>
+  <dt>Applied</dt><dd>{{ designer.created_at }}</dd>
+  <dt>Status</dt><dd>{{ designer.status }}</dd>
+</dl>
 
-<table style="border-spacing: 20px 10px;">
-    <tr>
-        <td><strong>Email</strong></td>
-        <td>{{ designer.email }}</td>
-    </tr>
-    <tr>
-        <td><strong>Applied</strong></td>
-        <td>{{ designer.created_at.replace('T', ' ') }}</td>
-    </tr>
-    <tr>
-        <td><strong>Status</strong></td>
-        <td>{{ designer.status }}</td>
-    </tr>
-</table>
-
-<h2>Company Details</h2>
-
-<table style="border-spacing: 20px 10px;">
-    <tr>
-        <td><strong>Studio / Company Name</strong></td>
-        <td>{{ designer.name }}</td>
-    </tr>
-
-    {% if company %}
-    <tr>
-        <td><strong>Registration No.</strong></td>
-        <td>{{ company.registration_no }}</td>
-    </tr>
-    <tr>
-        <td><strong>Address</strong></td>
-        <td>{{ company.address }}</td>
-    </tr>
-    <tr>
-        <td><strong>Phone</strong></td>
-        <td>{{ company.phone }}</td>
-    </tr>
-    <tr>
-        <td><strong>Description</strong></td>
-        <td>{{ company.description }}</td>
-    </tr>
-    {% endif %}
-</table>
-
+<h2>Company details</h2>
+<dl>
+  <dt>Studio / Company name</dt><dd>{{ designer.name }}</dd>
+  {% if company %}
+  <dt>Registration no.</dt><dd>{{ company.registration_no }}</dd>
+  <dt>Address</dt><dd>{{ company.address }}</dd>
+  <dt>Phone</dt><dd>{{ company.phone }}</dd>
+  <dt>Description</dt><dd>{{ company.description }}</dd>
+  {% endif %}
+</dl>
 {% if not company %}
 <p>No further company details submitted.</p>
 {% endif %}
 
-<hr>
-
-<table>
-  <tr>
-    <td>
-      <form method="get"
-      action="{{ url_for('admin.approve_application', user_id=designer.user_id) }}">
-      <button type="submit">Approve</button>
-      </form>
-    </td>
-    <td>
-      <form method="get"
-      action="{{ url_for('admin.reject_application', user_id=designer.user_id) }}">
-      <button type="submit">Reject</button>
-      </form>
-    </td>
-  </tr>
-
-</table>
-
-<br>
-
-<form method="post"
-      action="{{ url_for('admin.request_additional_docs', user_id=designer.user_id) }}">
-    <label for="remarks"><strong>Request Additional Documents</strong></label>
-    <br><br>
-
-    <textarea id="remarks"
-              name="remarks"
-              rows="3"
-              cols="50"
-              required></textarea>
-
-    <br><br>
-
-    <button type="submit">Send Request</button>
+<form method="get" action="{{ url_for('admin.approve_application', user_id=designer.user_id) }}">
+  <button type="submit">Approve</button>
 </form>
 
+<form method="get" action="{{ url_for('admin.reject_application', user_id=designer.user_id) }}">
+  <button type="submit">Reject</button>
+</form>
+
+<form method="post" action="{{ url_for('admin.request_additional_docs', user_id=designer.user_id) }}">
+  <label for="remarks">Request additional documents</label><br>
+  <textarea id="remarks" name="remarks" rows="3" required></textarea><br>
+  <button type="submit">Send request</button>
+</form>
 {% endblock %}

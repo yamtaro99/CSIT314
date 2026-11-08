@@ -18,16 +18,19 @@
   </div>
 {% elif g.user.role == 'customer' %}
   <div class="tiles">
+    <a class="tile" href="{{ url_for('reviews.view_approved_reviews') }}">
+      <strong>Client Reviews</strong><span>Read what past clients say</span>
+    </a>
     <div class="tile todo"><strong>Browse Projects</strong><span>Not built yet</span></div>
     <div class="tile todo"><strong>My Favourites</strong><span>Not built yet</span></div>
   </div>
 {% elif g.user.role == 'user_admin' %}
   <div class="tiles">
-    <div class="tile todo"><strong>Search User Accounts</strong><span>Suspend, Unsuspend, Deactivate user accounts</span></div>
+    <div class="tile todo"><strong>User Accounts</strong><span>Not built yet</span></div>
     <a class="tile" href="{{ url_for('admin.view_id_applications')}}">
       <strong>View ID Applications</strong><span>Approve, reject, request for more documents</span>
     </a>
-    <div class="tile todo"><strong>View Reported Listings</strong><span> </span></div>
+    <div class="tile todo"><strong>View ID Applications</strong><span>Not built yet</span></div>
   </div>
 {% elif g.user.role == 'platform_manager' %}
   <div class="tiles">

@@ -1,0 +1,32 @@
+{% extends "base.html" %}
+{% block title %}Client Reviews{% endblock %}
+
+{% block content %}
+<div class="page-head">
+  <h1>Client Reviews</h1>
+  {% if average %}
+    <p class="description">Average rating: ⭐ {{ average }} / 5 from {{ reviews|length }} review{{ 's' if reviews|length != 1 }}</p>
+  {% endif %}
+</div>
+
+{% if reviews %}
+  <div class="reviews-list" style="display: grid; gap: 16px; max-width: 700px;">
+  {% for review in reviews %}
+    <div class="card">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+        <div>
+          <strong>⭐ {{ review.rating }} / 5</strong>
+          {% if review.designer_name %}
+            <div class="description">for {{ review.designer_name }}</div>
+          {% endif %}
+        </div>
+        <span class="description">{{ review.submittedAt }}</span>
+      </div>
+      <p style="margin: 0;">{{ review.comment }}</p>
+    </div>
+  {% endfor %}
+  </div>
+{% else %}
+  <p class="empty">No client reviews have been published yet.</p>
+{% endif %}
+{% endblock %}
