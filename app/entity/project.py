@@ -3,6 +3,8 @@ from datetime import date
 from app.db import get_db, now
 from app.entity.category import Category
 from app.entity.project_photo import ProjectPhoto
+from app.entity.company import Company
+from app.entity.user_account import UserAccount
 
 
 class Project:
@@ -117,6 +119,14 @@ class Project:
         ).fetchall()
         return [Category._from_row(r) for r in rows]
 
+    def get_details(self):
+        return {
+            "photos": self.get_photos(),
+            "categories": self.get_categories(),
+            "designer": UserAccount.find_by_id(self.designer_id),
+            "company": Company.find_by_designer(self.designer_id),
+        }
+
     @classmethod
     def _from_row(cls, row):
         return cls(
@@ -137,5 +147,15 @@ class Project:
             "SELECT * FROM project WHERE designer_id = ? AND status = 'active'"
             " ORDER BY completion_date DESC, project_id DESC",
             (designer_id,),
+        ).fetchall()
+        return [cls._from_row(r) for r in rows]
+
+    @classmethod
+    def find_available_projects(cls):
+        rows = get_db().execute(
+            "SELECT p.* FROM project p JOIN user_account u ON p.designer_id = u.user_id"
+            " WHERE p.status = 'active' AND u.status = 'active'"
+            " AND u.role = 'interior_designer'"
+            " ORDER BY p.completion_date DESC, p.project_id DESC"
         ).fetchall()
         return [cls._from_row(r) for r in rows]

@@ -1,0 +1,43 @@
+
+{% extends "base.html" %}
+{% block title %}Browse Projects{% endblock %}
+{% block content %}
+
+<div class="page-head">
+  <h1>Browse Projects</h1>
+</div>
+
+{% if projects %}
+  <table class="list">
+    <thead>
+      <tr>
+        <th>Title</th>
+        <th>Location</th>
+        <th>Completion</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for p in projects %}
+      <tr>
+        <td>
+          <a href="{{ url_for('customer_projects.view_project_details', project_id=p.project_id) }}">
+            {{ p.title }}
+          </a>
+        </td>
+        <td>{{ p.location }}</td>
+        <td>{{ p.completion_date }}</td>
+        <td>
+          <a href="{{ url_for('customer_projects.view_project_details', project_id=p.project_id) }}">
+            View Details
+          </a>
+        </td>
+      </tr>
+    {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">No projects are currently available.</p>
+{% endif %}
+
+{% endblock %}

@@ -21,7 +21,9 @@
     <a class="tile" href="{{ url_for('reviews.view_approved_reviews') }}">
       <strong>Client Reviews</strong><span>Read what past clients say</span>
     </a>
-    <div class="tile todo"><strong>Browse Projects</strong><span>Not built yet</span></div>
+    <a class="tile" href="{{ url_for('customer_projects.display_project_listing')}}">
+      <strong>Browse Projects</strong><span>View interior design projects</span>
+    </a>
     <div class="tile todo"><strong>My Favourites</strong><span>Not built yet</span></div>
   </div>
 {% elif g.user.role == 'user_admin' %}

@@ -1,0 +1,52 @@
+
+{% extends "base.html" %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+
+<p>
+  <a href="{{ url_for('customer_projects.display_project_listing') }}">
+    &larr; Browse Projects
+  </a>
+</p>
+
+<div class="page-head">
+  <h1>{{ project.title }}</h1>
+</div>
+
+<p class="meta">
+  {{ project.location }} ·
+  {{ 'Ongoing, completes' if project.is_ongoing() else 'Completed' }}
+  {{ project.completion_date }}
+</p>
+
+<p>
+  {% for c in categories %}
+    <span class="pill">{{ c.name }}</span>
+  {% else %}
+    <span class="muted">No categories yet</span>
+  {% endfor %}
+</p>
+
+<p class="description">{{ project.description }}</p>
+
+<h2>Interior Designer</h2>
+{% if designer %}
+  <p>{{ designer.name }}</p>
+{% endif %}
+{% if company %}
+  <p class="muted">{{ company.description }}</p>
+{% endif %}
+
+<h2>Photos</h2>
+{% if photos %}
+  <div class="gallery">
+    {% for photo in photos %}
+      <img src="{{ photo.file_url }}"
+           alt="{{ photo.caption or project.title }}">
+    {% endfor %}
+  </div>
+{% else %}
+  <p class="empty">No photos yet.</p>
+{% endif %}
+
+{% endblock %}
