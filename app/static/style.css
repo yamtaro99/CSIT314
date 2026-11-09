@@ -34,7 +34,7 @@ h2 { font-size: 1.2rem; margin-top: 32px; }
 .card.narrow { max-width: 420px; margin: 40px auto; }
 
 form label { display: block; margin-bottom: 14px; font-weight: 500; }
-input:not([type=checkbox]), textarea { display: block; width: 100%; margin-top: 4px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; background: #fff; }
+input:not([type=checkbox]), textarea, select { display: block; width: 100%; margin-top: 4px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; background: #fff; }
 
 button, .button { display: inline-block; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer; text-decoration: none; }
 .primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }

@@ -6,8 +6,9 @@ from app.entity.user_account import UserAccount
 from tests.conftest import login, make_user
 
 
-# create test data
+# UC31 View Project Details
 
+# create sample customer and project data for testing
 @pytest.fixture
 def customer (app):
     return make_user(
@@ -32,6 +33,7 @@ def project(designer):
 
 # test the entity
 
+# check that a project can be found using its project ID
 def test_find_by_id_returns_project(project):
     found = Project.find_by_id(project.project_id)
 
@@ -39,8 +41,10 @@ def test_find_by_id_returns_project(project):
     assert found.title == "Woodlands Family Home"
     assert found.location == "Woodlands"
 
+
 # test the controller
 
+# check that the controller allows an active project to be viewed
 def test_controller_returns_active_project(project):
     controller = ViewProjectDetailsController()
     found = controller.get_project_details(project.project_id)
@@ -49,16 +53,20 @@ def test_controller_returns_active_project(project):
     assert found.project_id == project.project_id
     assert controller.errors == []
 
+
 # test the alternative flow
 
+# check that an unknown project is rejected instead of being displayed
 def test_controller_rejects_unknown_project(app):
     controller = ViewProjectDetailsController()
 
     assert controller.get_project_details(999999) is None
     assert controller.errors == ["Project unavailable"]
 
+
 # test the boundary
 
+#check that a customer can browse projects and open the details page
 def test_customer_can_browse_and_view_details(client, customer, project, categories):
     assert project.set_categories([categories[0]]) is True
     login(client, customer.email)

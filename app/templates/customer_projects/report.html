@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}Report Project{% endblock %}
+{% block content %}
+
+<p>
+  <a href="{{ url_for('customer_projects.view_project_details', project_id=project.project_id) }}">
+    &larr; Back to Project Details
+  </a>
+</p>
+
+<div class="card">
+  <h1>Report Project</h1>
+  <p class="meta">{{ project.title }}</p>
+
+  <form method="post" action="{{ url_for('customer_projects.submit_report', project_id=project.project_id) }}">
+
+    <label for="reason">Reason for reporting</label>
+    <select name="reason" id="reason">
+      <option value="">Select a reason</option>
+      {% for option in reasons %}
+        <option value="{{ option }}" {% if reason == option %}selected{% endif %}>
+          {{ option }}
+        </option>
+      {% endfor %}
+    </select>
+
+    <label for="details">Additional Details (Optional)</label>
+    <textarea name="details" id="details" rows="4" maxlength="1000">{{ details }}</textarea>
+
+    <button class="primary" type="submit">Submit Report</button>
+  </form>
+
+  <form method="post" action="{{ url_for('customer_projects.cancel_report', project_id=project.project_id) }}">
+    <button type="submit">Cancel</button>
+  </form>
+
+</div>
+
+{% endblock %}

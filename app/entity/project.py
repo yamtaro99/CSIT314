@@ -119,6 +119,7 @@ class Project:
         ).fetchall()
         return [Category._from_row(r) for r in rows]
 
+    # UC31 - get the photos, categories and designer information for the selected project
     def get_details(self):
         return {
             "photos": self.get_photos(),
@@ -150,6 +151,7 @@ class Project:
         ).fetchall()
         return [cls._from_row(r) for r in rows]
 
+    # UC31 - find active projects that belong to active IDs
     @classmethod
     def find_available_projects(cls):
         rows = get_db().execute(

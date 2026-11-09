@@ -1,6 +1,7 @@
 PRAGMA foreign_keys = OFF;
 DROP TABLE IF EXISTS project_category;
 DROP TABLE IF EXISTS project_photo;
+DROP TABLE IF EXISTS project_report;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user_account;
@@ -94,5 +95,14 @@ CREATE TABLE customer_review (
 );
 
 -- Customer Project Interaction
+CREATE TABLE project_report (
+    report_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id INTEGER NOT NULL REFERENCES user_account(user_id),
+    project_id INTEGER NOT NULL REFERENCES project(project_id),
+    reason TEXT NOT NULL,
+    details TEXT NOT NULL DEFAULT '',
+    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed', 'resolved')),
+    submitted_at TEXT NOT NULL
+);
 
 -- Project Interest Tracking

@@ -11,6 +11,11 @@
 
 <div class="page-head">
   <h1>{{ project.title }}</h1>
+
+  <a class="button danger"
+     href="{{ url_for('customer_projects.display_report_form', project_id=project.project_id) }}">
+    Report Project
+  </a>
 </div>
 
 <p class="meta">
