@@ -10,6 +10,7 @@ You need Python 3.10 or newer.
 ```bash
 pip install -r requirements.txt
 python scripts/seed_data.py          # builds the database with ~200 users and ~220 projects
+python scripts/seed_project_interest.py # populate database for project interest
 python -m flask --app app run --debug
 ```
 
