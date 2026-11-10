@@ -1,11 +1,3 @@
-"""Tests for UC-20 Publish Approved Customer Reviews.
-
-Covers: the designer's pending list and detail page, approving and rejecting
-reviews, what visitors see on the public approved-reviews page, and access control.
-
-Uses the shared fixtures and helpers from tests/conftest.py:
-app, client, designer, other_designer, login(), make_user().
-"""
 import pytest
 
 from app.control.review_controllers import ReviewController
