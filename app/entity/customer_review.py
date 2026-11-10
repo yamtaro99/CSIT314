@@ -1,14 +1,14 @@
 from app.db import get_db, now
 
 class CustomerReview:
-    def __init__(self, reviewId, rating, comment, status, submittedAt, designer_id=None, client_id=None):
+    def __init__(self, reviewId, rating, comment, status, submittedAt, designer_id=None, customer_id=None):
         self.reviewId = reviewId
         self.rating = rating
         self.comment = comment
         self.status = status  # 'pending', 'approved', 'rejected'
         self.submittedAt = submittedAt
         self.designer_id = designer_id
-        self.client_id = client_id
+        self.customer_id = customer_id
 
     def set_status(self, new_status):
         """Updates the review status ('approved' or 'rejected')."""
@@ -26,7 +26,7 @@ class CustomerReview:
         return cls(
             reviewId=row["review_id"],
             designer_id=row["designer_id"],
-            client_id=row["client_id"],
+            customer_id=row["customer_id"],
             rating=row["rating"],
             comment=row["comment"],
             status=row["status"],

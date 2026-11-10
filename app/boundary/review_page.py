@@ -23,7 +23,7 @@ def view_pending_reviews():
 @bp.route("/<int:review_id>", methods=["GET"])
 @designer_only
 def view_review_details(review_id):
-    """Step 3: Show review details (rating, comment, client)[cite: 36]."""
+    """Step 3: Show review details (rating, comment, customer)[cite: 36]."""
     controller = ReviewController()
     review = controller.get_review_details(review_id)
     if not review:

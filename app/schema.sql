@@ -1,7 +1,6 @@
 PRAGMA foreign_keys = OFF;
 DROP TABLE IF EXISTS project_category;
 DROP TABLE IF EXISTS project_photo;
-DROP TABLE IF EXISTS project_report;
 DROP TABLE IF EXISTS project;
 DROP TABLE IF EXISTS category;
 DROP TABLE IF EXISTS user_account;
@@ -71,7 +70,6 @@ CREATE TABLE company (
     description     TEXT    NOT NULL DEFAULT ''
 );
 
--- UC-21 Consultation Slots
 CREATE TABLE consultation_slot (
     slot_id INTEGER PRIMARY KEY AUTOINCREMENT,
     designer_id INTEGER NOT NULL,
@@ -82,11 +80,10 @@ CREATE TABLE consultation_slot (
     FOREIGN KEY (designer_id) REFERENCES user_account (user_id)
 );
 
--- UC-20 Customer Client Reviews
 CREATE TABLE customer_review (
     review_id INTEGER PRIMARY KEY AUTOINCREMENT,
     designer_id INTEGER NOT NULL,
-    client_id INTEGER,
+    customer_id INTEGER,
     rating INTEGER NOT NULL,
     comment TEXT NOT NULL,
     status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
@@ -95,14 +92,5 @@ CREATE TABLE customer_review (
 );
 
 -- Customer Project Interaction
-CREATE TABLE project_report (
-    report_id INTEGER PRIMARY KEY AUTOINCREMENT,
-    customer_id INTEGER NOT NULL REFERENCES user_account(user_id),
-    project_id INTEGER NOT NULL REFERENCES project(project_id),
-    reason TEXT NOT NULL,
-    details TEXT NOT NULL DEFAULT '',
-    status TEXT NOT NULL DEFAULT 'pending' CHECK (status IN ('pending', 'reviewed', 'resolved')),
-    submitted_at TEXT NOT NULL
-);
 
 -- Project Interest Tracking
