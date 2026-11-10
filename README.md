@@ -11,6 +11,7 @@ You need Python 3.10 or newer.
 pip install -r requirements.txt
 python scripts/seed_data.py          # builds the database with ~200 users and ~220 projects
 python scripts/seed_project_interest.py # populate database for project interest
+python scripts/create_project_report_table.py  # ensures the UC37 report table exists
 python -m flask --app app run --debug
 ```
 
