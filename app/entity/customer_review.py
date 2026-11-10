@@ -1,7 +1,18 @@
+from datetime import datetime
+
 from app.db import get_db, now
 
+
+def format_submitted_at(value):
+    try:
+        return datetime.fromisoformat(value).strftime("%d %b %Y, %H:%M")
+    except (TypeError, ValueError):
+        return value
+
+
 class CustomerReview:
-    def __init__(self, reviewId, rating, comment, status, submittedAt, designer_id=None, customer_id=None):
+    def __init__(self, reviewId, rating, comment, status, submittedAt,
+                 designer_id=None, customer_id=None):
         self.reviewId = reviewId
         self.rating = rating
         self.comment = comment
@@ -30,7 +41,7 @@ class CustomerReview:
             rating=row["rating"],
             comment=row["comment"],
             status=row["status"],
-            submittedAt=row["submitted_at"]
+            submittedAt=format_submitted_at(row["submitted_at"])
         )
 
     @classmethod
@@ -48,7 +59,7 @@ class CustomerReview:
             (review_id,)
         ).fetchone()
         return cls._from_row(row) if row else None
-    
+
     @classmethod
     def find_approved(cls):
         """Fetches approved reviews, newest first, with the designer's name attached."""
