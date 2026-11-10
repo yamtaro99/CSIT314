@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Pending Customer Reviews{% endblock %}
+{% block title %}Pending Client Reviews{% endblock %}
 
 {% block content %}
 <div class="page-head">
-  <h1>Pending Customer Reviews</h1>
+  <h1>Pending Client Reviews</h1>
 </div>
 
 {% if reviews %}
@@ -30,6 +30,6 @@
     </tbody>
   </table>
 {% else %}
-  <p class="empty">No pending customer reviews waiting for approval.</p>
+  <p class="empty">No pending client reviews waiting for approval.</p>
 {% endif %}
 {% endblock %}

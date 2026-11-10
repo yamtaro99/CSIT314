@@ -34,7 +34,7 @@ h2 { font-size: 1.2rem; margin-top: 32px; }
 .card.narrow { max-width: 420px; margin: 40px auto; }
 
 form label { display: block; margin-bottom: 14px; font-weight: 500; }
-input:not([type=checkbox]), textarea { display: block; width: 100%; margin-top: 4px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; background: #fff; }
+input:not([type=checkbox]), textarea, select { display: block; width: 100%; margin-top: 4px; padding: 9px 10px; border: 1px solid var(--border); border-radius: 8px; font: inherit; background: #fff; }
 
 button, .button { display: inline-block; padding: 8px 16px; border-radius: 8px; border: 1px solid var(--border); background: var(--surface); color: var(--text); font: inherit; cursor: pointer; text-decoration: none; }
 .primary { background: var(--accent); border-color: var(--accent); color: var(--accent-text); }
@@ -72,3 +72,27 @@ button.link { border: 0; background: none; color: var(--accent); padding: 0; }
   .list tr { display: block; border-bottom: 1px solid var(--border); padding: 8px 0; }
   .actions { justify-content: flex-start; }
 }
+
+/* US03 / US07 */
+.shortlist-form { display: flex; align-items: center; gap: 8px; margin: 12px 0 20px; }
+.interest-summary { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px; margin: 20px 0; }
+.interest-summary .card { display: flex; flex-direction: column; gap: 8px; }
+.interest-summary strong { font-size: 1.7rem; }
+.interest-note { margin-top: 14px; font-size: .9rem; }
+
+/* Revised US03 + US07: offline weekly charts and favourites */
+.interest-filter { display: flex; gap: 12px; align-items: end; flex-wrap: wrap; margin: 18px 0; }
+.interest-filter label { flex: 1 1 250px; margin: 0; }
+.interest-filter select { width: 100%; }
+.interest-charts { display: grid; grid-template-columns: 1fr; gap: 16px; }
+.interest-chart-card { min-width: 0; }
+.interest-chart-card h3 { margin: 0 0 4px; font-size: 1.12rem; }
+.interest-chart { width: 100%; height: auto; overflow: visible; display: block; }
+.chart-grid { stroke: #deded8; stroke-width: 1; }
+.chart-axis-text { font-size: 13px; fill: #555e59; }
+.chart-value { font-size: 13px; fill: #28332e; font-weight: 650; }
+.chart-series { stroke-width: 3; stroke-linejoin: round; stroke-linecap: round; }
+.chart-series.chart-views { stroke: #316c86; }
+.chart-series.chart-saves { stroke: #a46a21; }
+.chart-marker.chart-views { stroke: #316c86; fill: #fff; stroke-width: 2.6; }
+.chart-marker.chart-saves { stroke: #a46a21; fill: #fff; stroke-width: 2.6; }

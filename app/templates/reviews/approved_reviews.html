@@ -1,9 +1,9 @@
 {% extends "base.html" %}
-{% block title %}Customer Reviews{% endblock %}
+{% block title %}Client Reviews{% endblock %}
 
 {% block content %}
 <div class="page-head">
-  <h1>Customer Reviews</h1>
+  <h1>Client Reviews</h1>
   {% if average %}
     <p class="description">Average rating: ⭐ {{ average }} / 5 from {{ reviews|length }} review{{ 's' if reviews|length != 1 }}</p>
   {% endif %}
@@ -27,6 +27,6 @@
   {% endfor %}
   </div>
 {% else %}
-  <p class="empty">No Customer reviews have been published yet.</p>
+  <p class="empty">No client reviews have been published yet.</p>
 {% endif %}
 {% endblock %}

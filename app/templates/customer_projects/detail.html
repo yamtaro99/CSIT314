@@ -18,6 +18,17 @@
   </a>
 </div>
 
+<form method="post" action="{{ url_for('customer_projects.update_shortlist', project_id=project.project_id) }}" class="shortlist-form">
+  {% if shortlisted %}
+    <input type="hidden" name="action" value="remove">
+    <button type="submit">Remove from shortlist</button>
+    <span class="pill">Saved</span>
+  {% else %}
+    <input type="hidden" name="action" value="add">
+    <button type="submit" class="primary">Add to shortlist</button>
+  {% endif %}
+</form>
+
 <p class="meta">
   {{ project.location }} ·
   {{ 'Ongoing, completes' if project.is_ongoing() else 'Completed' }}
