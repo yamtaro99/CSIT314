@@ -15,7 +15,7 @@ def display_error(msg):
 @bp.route("/pending", methods=["GET"])
 @designer_only
 def view_pending_reviews():
-    """Step 1 & 2: ID views pending reviews list[cite: 36]."""
+    """Step 1 & 2: ID views pending reviews list."""
     controller = ReviewController()
     reviews = controller.get_pending_reviews(g.user.user_id)
     return render_template("reviews/pending_reviews.html", reviews=reviews)
@@ -23,9 +23,9 @@ def view_pending_reviews():
 @bp.route("/<int:review_id>", methods=["GET"])
 @designer_only
 def view_review_details(review_id):
-    """Step 3: Show review details (rating, comment, customer)[cite: 36]."""
+    """Step 3: Show review details (rating, comment, customer)."""
     controller = ReviewController()
-    review = controller.get_review_details(review_id)
+    review = controller.get_review_details(review_id, g.user.user_id)
     if not review:
         for err in controller.errors:
             display_error(err)
@@ -35,9 +35,9 @@ def view_review_details(review_id):
 @bp.route("/<int:review_id>/approve", methods=["POST"])
 @designer_only
 def approve_review(review_id):
-    """Steps 4, 5 & 6: Approve review and publish[cite: 36]."""
+    """Steps 4, 5 & 6: Approve review and publish."""
     controller = ReviewController()
-    if controller.approve_review(review_id):
+    if controller.approve_review(review_id, g.user.user_id):
         display_success("Review approved and published successfully.")
     else:
         for err in controller.errors:
@@ -47,9 +47,9 @@ def approve_review(review_id):
 @bp.route("/<int:review_id>/reject", methods=["POST"])
 @designer_only
 def reject_review(review_id):
-    """Alternative flow 4a: Reject review, keeping it hidden[cite: 36]."""
+    """Alternative flow 4a: Reject review, keeping it hidden."""
     controller = ReviewController()
-    if controller.reject_review(review_id):
+    if controller.reject_review(review_id, g.user.user_id):
         display_success("Review rejected and kept hidden.")
     else:
         for err in controller.errors:
@@ -63,4 +63,3 @@ def view_approved_reviews():
     reviews = controller.get_approved_reviews()
     average = round(sum(r.rating for r in reviews) / len(reviews), 1) if reviews else None
     return render_template("reviews/approved_reviews.html", reviews=reviews, average=average)
-
