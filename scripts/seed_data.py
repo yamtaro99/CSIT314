@@ -106,6 +106,47 @@ def seed_companies(conn):
         " VALUES (?, ?, ?, ?, ?)", rows)
 
 
+def seed_customer_reviews(conn):
+    """Generates pending and approved customer reviews for interior designers (UC-20)."""
+    active_designers = [r[0] for r in conn.execute(
+        "SELECT user_id FROM user_account WHERE role = 'interior_designer' AND status = 'active'")]
+    customers = [r[0] for r in conn.execute(
+        "SELECT user_id FROM user_account WHERE role = 'customer' AND status = 'active'")]
+
+    reviews = []
+    comments = [
+        "Transformed our 4-room HDB seamlessly. Extremely professional and communicative team!",
+        "Great ideas for space planning, though completion was slightly delayed.",
+        "Absolute pleasure working with them. The carpentry work exceeded our expectations.",
+        "Good initial consultation, but we decided to go with another design style."
+    ]
+
+    for designer_id in active_designers[:20]:
+        # Add a pending review waiting for ID approval (UC-20)
+        reviews.append((
+            designer_id,
+            RNG.choice(customers),
+            RNG.randint(3, 5),
+            RNG.choice(comments),
+            "pending",
+            rand_dt(5)
+        ))
+        # Add an approved review
+        reviews.append((
+            designer_id,
+            RNG.choice(customers),
+            5,
+            "Fantastic workmanship and modern aesthetic design!",
+            "approved",
+            rand_dt(30)
+        ))
+
+    conn.executemany(
+        "INSERT INTO customer_review (designer_id, customer_id, rating, comment, status, submitted_at) VALUES (?, ?, ?, ?, ?, ?)",
+        reviews
+    )
+
+
 def main():
     app = create_app()
     with app.app_context():
@@ -116,9 +157,10 @@ def main():
         seed_companies(conn)
         seed_categories(conn)
         seed_projects(conn)
+        seed_customer_reviews(conn)
         conn.commit()
 
-        for table in ("user_account", "category", "project", "project_category"):
+        for table in ("user_account", "category", "project", "project_category", "customer_review"):
             count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
             print(f"{table:20} {count}")
         print(f"\nAll accounts use password: {SEED_PASSWORD}")
