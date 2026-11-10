@@ -14,7 +14,9 @@
     <a class="tile" href="{{ url_for('reviews.view_pending_reviews') }}">
       <strong>Client Reviews</strong><span>Review and publish submitted client reviews</span>
     </a>
-    <div class="tile todo"><strong>Project Interest</strong><span>Not built yet</span></div>
+    <a class="tile" href="{{ url_for('project_interest.dashboard') }}">
+      <strong>Project Interest Dashboard</strong><span>View interest data and weekly trends</span>
+    </a>
   </div>
 {% elif g.user.role == 'customer' %}
   <div class="tiles">
@@ -24,7 +26,9 @@
     <a class="tile" href="{{ url_for('customer_projects.display_project_listing')}}">
       <strong>Browse Projects</strong><span>View interior design projects</span>
     </a>
-    <div class="tile todo"><strong>My Favourites</strong><span>Not built yet</span></div>
+    <a class="tile" href="{{ url_for('customer_projects.my_favourites') }}">
+      <strong>My Favourites</strong><span>View your favourite projects</span>
+    </a>
   </div>
 {% elif g.user.role == 'user_admin' %}
   <div class="tiles">

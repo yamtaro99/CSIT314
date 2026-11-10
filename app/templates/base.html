@@ -15,6 +15,10 @@
           <a href="{{ url_for('portfolio.display_portfolio') }}">My Portfolio</a>
           <a href="{{ url_for('consultation.view_calendar') }}">Consultation Availability</a>
           <a href="{{ url_for('reviews.view_pending_reviews') }}">Client Reviews</a>
+          <a href="{{ url_for('project_interest.dashboard') }}">Project Interest</a>
+        {% elif g.user.role == 'customer' %}
+          <a href="{{ url_for('customer_projects.display_project_listing') }}">Browse Projects</a>
+          <a href="{{ url_for('customer_projects.my_favourites') }}">My Favourites</a>
         {% endif %}
       </nav>
       <div class="who">

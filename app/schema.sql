@@ -1,4 +1,7 @@
 PRAGMA foreign_keys = OFF;
+DROP TABLE IF EXISTS project_shortlist_event;
+DROP TABLE IF EXISTS project_view;
+DROP TABLE IF EXISTS project_shortlist;
 DROP TABLE IF EXISTS project_category;
 DROP TABLE IF EXISTS project_photo;
 DROP TABLE IF EXISTS project_report;
@@ -105,4 +108,37 @@ CREATE TABLE project_report (
     submitted_at TEXT NOT NULL
 );
 
--- Project Interest Tracking
+-- Project Interest Tracking: one active favourite per customer/project pair.
+CREATE TABLE project_shortlist (
+    customer_id INTEGER NOT NULL REFERENCES user_account(user_id),
+    project_id  INTEGER NOT NULL REFERENCES project(project_id),
+    created_at  TEXT NOT NULL,
+    PRIMARY KEY (customer_id, project_id)
+);
+CREATE INDEX idx_shortlist_project ON project_shortlist(project_id);
+
+-- Each successful customer detail-page view is an event.
+-- demo_event_key is NULL for live views; seeded views have stable unique keys.
+CREATE TABLE project_view (
+    view_id        INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id    INTEGER NOT NULL REFERENCES user_account(user_id),
+    project_id     INTEGER NOT NULL REFERENCES project(project_id),
+    viewed_at      TEXT NOT NULL,
+    demo_event_key TEXT UNIQUE
+);
+CREATE INDEX idx_project_view_project ON project_view(project_id);
+
+
+
+-- US07: historical actions are preserved when a favourite is removed.
+-- The weekly chart counts only `add` events. Active favourites remain in project_shortlist.
+CREATE TABLE project_shortlist_event (
+    event_id       INTEGER PRIMARY KEY AUTOINCREMENT,
+    customer_id    INTEGER NOT NULL REFERENCES user_account(user_id),
+    project_id     INTEGER NOT NULL REFERENCES project(project_id),
+    action         TEXT NOT NULL CHECK(action IN ('add', 'remove')),
+    event_at       TEXT NOT NULL,
+    demo_event_key TEXT UNIQUE
+);
+CREATE INDEX idx_shortlist_event_project_time
+    ON project_shortlist_event(project_id, event_at);

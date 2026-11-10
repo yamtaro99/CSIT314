@@ -9,6 +9,7 @@ from werkzeug.security import generate_password_hash
 
 from app import create_app
 from app.db import get_db, init_db
+from scripts.seed_project_interest import seed_demo_interest
 
 SEED_PASSWORD = "Password123!"
 RNG = random.Random(314)
@@ -117,6 +118,7 @@ def main():
         seed_categories(conn)
         seed_projects(conn)
         conn.commit()
+        seed_demo_interest(conn)
 
         for table in ("user_account", "category", "project", "project_category"):
             count = conn.execute(f"SELECT COUNT(*) FROM {table}").fetchone()[0]
