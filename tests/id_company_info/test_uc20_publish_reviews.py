@@ -136,7 +136,7 @@ class TestDesignerReviewPages:
     def test_pending_list_empty_message(self, designer_client):
         response = designer_client.get("/reviews/pending")
 
-        assert b"No pending customer reviews waiting for approval." in response.data
+        assert b"No pending client reviews waiting for approval." in response.data
 
     def test_detail_page_shows_rating_comment_and_formatted_date(self, designer_client, app, designer):
         review_id = insert_review(app, designer.user_id, "Lovely carpentry", rating=3,
@@ -247,7 +247,7 @@ class TestPublicApprovedReviewsPage:
     def test_empty_message_when_nothing_published(self, client):
         response = client.get("/reviews/approved")
 
-        assert b"No Customer reviews have been published yet." in response.data
+        assert b"No client reviews have been published yet." in response.data
 
 
 # ---------- Access control ----------

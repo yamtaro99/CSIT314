@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% block title %}Project Interest{% endblock %}
+{% block content %}
+<div class="page-head">
+  <div>
+    <h1>Project Interest Dashboard</h1>
+    <p class="muted">View customers interest in your projects.</p>
+  </div>
+  <a class="button" href="{{ url_for('portfolio.display_portfolio') }}">My Portfolio</a>
+</div>
+
+<section aria-labelledby="shortlist-counts-heading">
+  <h2 id="shortlist-counts-heading">Your current project shortlist counts</h2>
+  {% if metrics %}
+    <div class="interest-summary">
+      <div class="card"><span class="muted">Active projects</span><strong>{{ metrics|length }}</strong></div>
+      <div class="card"><span class="muted">Current favourites across projects</span><strong>{{ metrics|sum(attribute='shortlist_count') }}</strong></div>
+    </div>
+    <table class="list">
+      <thead><tr><th>Project</th><th>Location</th><th>Customers currently shortlisting</th></tr></thead>
+      <tbody>
+      {% for item in metrics %}
+      <tr>
+        <td><a href="{{ url_for('portfolio.display_project', project_id=item.project.project_id) }}">{{ item.project.title }}</a></td>
+        <td>{{ item.project.location }}</td>
+        <td><strong>{{ item.shortlist_count }}</strong></td>
+      </tr>
+      {% endfor %}
+      </tbody>
+    </table>
+  {% else %}
+    <p class="empty">No active projects to analyse yet. Add a project from My Portfolio.</p>
+  {% endif %}
+</section>
+
+<section aria-labelledby="weekly-trends-heading">
+  <h2 id="weekly-trends-heading">Weekly views for new shortlists</h2>
+  <form method="get" action="{{ url_for('project_interest.dashboard') }}" class="interest-filter">
+    <label for="project_id">Show interest for</label>
+    <select name="project_id" id="project_id">
+      <option value="all" {% if selected_project_id is none %}selected{% endif %}>All my active projects</option>
+      {% for item in metrics %}
+      <option value="{{ item.project.project_id }}" {% if selected_project_id == item.project.project_id %}selected{% endif %}>{{ item.project.title }}</option>
+      {% endfor %}
+    </select>
+    <button class="primary" type="submit">Update graph</button>
+  </form>
+
+  <div class="interest-charts">
+  {% for chart in [trend.views_chart, trend.shortlists_chart] %}
+    {% set chart_kind = 'chart-views' if loop.index == 1 else 'chart-saves' %}
+    <div class="card interest-chart-card">
+      <h3>{{ chart.title }}</h3>
+      <p class="muted">Total during these eight weeks: <strong>{{ chart.total }}</strong></p>
+      <svg viewBox="0 0 790 274" role="img" aria-label="{{ chart.title }} line graph across eight weeks" class="interest-chart">
+        {% for grid in chart.grid_lines %}
+          <line x1="54" y1="{{ grid.y }}" x2="734" y2="{{ grid.y }}" class="chart-grid" />
+          <text x="45" y="{{ grid.y + 4 }}" text-anchor="end" class="chart-axis-text">{{ grid.value }}</text>
+        {% endfor %}
+        <polyline points="{{ chart.polyline }}" fill="none" class="chart-series {{ chart_kind }}" />
+        {% for point in chart.points %}
+          <circle cx="{{ point.x }}" cy="{{ point.y }}" r="5" class="chart-marker {{ chart_kind }}">
+            <title>{{ point.label }}: {{ point.value }}</title>
+          </circle>
+          <text x="{{ point.x }}" y="{{ point.y - 11 }}" text-anchor="middle" class="chart-value">{{ point.value }}</text>
+          <text x="{{ point.x }}" y="235" text-anchor="middle" class="chart-axis-text">{{ point.label }}</text>
+        {% endfor %}
+      </svg>
+    </div>
+  {% endfor %}
+  </div>
+</section>
+{% endblock %}

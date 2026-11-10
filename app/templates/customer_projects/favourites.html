@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% block title %}My Favourites{% endblock %}
+{% block content %}
+<div class="page-head">
+  <h1>My Favourites</h1>
+  <a class="button" href="{{ url_for('customer_projects.display_project_listing') }}">Browse Projects</a>
+</div>
+<p class="muted">View or remove your favourite projects.</p>
+{% if projects %}
+  <table class="list">
+    <thead><tr><th>Project</th><th>Location</th><th>Actions</th></tr></thead>
+    <tbody>
+      {% for project in projects %}
+      <tr>
+        <td><a href="{{ url_for('customer_projects.view_project_details', project_id=project.project_id) }}">{{ project.title }}</a></td>
+        <td>{{ project.location }}</td>
+        <td>
+          <form method="post" action="{{ url_for('customer_projects.update_shortlist', project_id=project.project_id) }}">
+            <input type="hidden" name="action" value="remove">
+            <input type="hidden" name="return_to" value="favourites">
+            <button type="submit">Remove favourite</button>
+          </form>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+{% else %}
+  <p class="empty">You have not added any projects to My Favourites yet.</p>
+{% endif %}
+{% endblock %}
