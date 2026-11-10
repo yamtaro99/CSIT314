@@ -32,7 +32,6 @@ class ViewProjectDetailsController:
 class ReportProjectController:
     def __init__(self):
         self.errors = []
-        self.report = None
 
     # check the report details before saving it to the database
     def report_project(self, customer_id, project_id, reason, details=""):
@@ -71,12 +70,12 @@ class ReportProjectController:
             return False
 
         # create the report using the details entered by the customer
-        self.report = ProjectReport(
+        report = ProjectReport(
             customer_id, project_id, reason, details
         )
 
         # save the report and return an error if it fails
-        if not self.report.submit():
+        if not report.submit():
             self.errors = ["Unable to submit report. Please try again."]
             return False
 

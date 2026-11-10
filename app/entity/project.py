@@ -119,7 +119,7 @@ class Project:
         ).fetchall()
         return [Category._from_row(r) for r in rows]
 
-    # UC31: View information about a selected project using shared entities.
+    # UC31 - get the photos, categories and ID information for the selected project
     def get_details(self):
         return {
             "photos": self.get_photos(),
@@ -151,7 +151,7 @@ class Project:
         ).fetchall()
         return [cls._from_row(r) for r in rows]
 
-    # UC31: Only show projects owned by currently active interior designers.
+    # UC31 - find active projects that belong to active IDs
     @classmethod
     def find_available_projects(cls):
         rows = get_db().execute(

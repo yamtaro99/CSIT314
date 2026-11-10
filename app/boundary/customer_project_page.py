@@ -97,14 +97,6 @@ def update_shortlist(project_id):
 
 # UC37 Report Inappropriate Projects
 
-# display message so that customers know if the report was submitted
-def display_report_result(success):
-    if success:
-        flash("Report submitted successfully", "success")
-    else:
-        display_error("Unable to submit report. Please try again.")
-
-
 # open the report form for the selected project
 @bp.route("/<int:project_id>/report", methods=["GET"])
 @customer_only
@@ -140,7 +132,7 @@ def submit_report(project_id):
     if controller.report_project(
         g.user.user_id, project_id, reason, details
     ):
-        display_report_result(True)
+        flash("Report submitted successfully", "success")
         return redirect(
             url_for("customer_projects.view_project_details", project_id=project_id)
         )
