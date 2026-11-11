@@ -25,7 +25,8 @@ CREATE TABLE user_account (
                   CHECK (role IN ('user_admin', 'interior_designer', 'customer', 'platform_manager')),
     status        TEXT    NOT NULL DEFAULT 'active'
                   CHECK (status IN ('pending', 'active', 'suspended', 'deactivated')),
-    created_at    TEXT    NOT NULL
+    created_at    TEXT    NOT NULL,
+    last_login    TEXT
 );
 
 -- Platform Management
@@ -44,12 +45,13 @@ CREATE TABLE project (
     description     TEXT    NOT NULL,
     location        TEXT    NOT NULL,
     completion_date TEXT    NOT NULL,
-    status          TEXT    NOT NULL DEFAULT 'active'
-                    CHECK (status IN ('active', 'removed')),
+    status          TEXT    NOT NULL DEFAULT 'pending'
+                    CHECK (status IN ('pending', 'active', 'removed', 'rejected')),
     created_at      TEXT    NOT NULL,
     updated_at      TEXT    NOT NULL
 );
 CREATE INDEX idx_project_designer ON project (designer_id);
+CREATE INDEX idx_project_status ON project (status);
 
 CREATE TABLE project_photo (
     photo_id    INTEGER PRIMARY KEY AUTOINCREMENT,

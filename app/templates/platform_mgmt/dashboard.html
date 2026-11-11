@@ -1,0 +1,113 @@
+{% extends "base.html" %}
+{% block title %}Platform Dashboard{% endblock %}
+{% block content %}
+<div class="dashboard">
+  <h1>Platform Dashboard</h1>
+
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-value">{{ metrics.total_projects or 0 }}</div>
+      <div class="metric-label">Active Projects</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">{{ metrics.total_designers or 0 }}</div>
+      <div class="metric-label">Active Designers</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">{{ metrics.total_customers or 0 }}</div>
+      <div class="metric-label">Active Customers</div>
+    </div>
+    <div class="metric-card warning">
+      <div class="metric-value">{{ metrics.pending_designers or 0 }}</div>
+      <div class="metric-label">Pending Designer Accounts</div>
+    </div>
+    <div class="metric-card warning">
+      <div class="metric-value">{{ metrics.pending_projects or 0 }}</div>
+      <div class="metric-label">Pending Project Submissions</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">{{ metrics.total_categories or 0 }}</div>
+      <div class="metric-label">Active Categories</div>
+    </div>
+  </div>
+
+  <div class="dashboard-sections">
+    <section class="card">
+      <div class="card-header">
+        <h2>Recent Projects</h2>
+        <a class="button small" href="{{ url_for('platform_mgmt.categories') }}">Manage Categories</a>
+      </div>
+      {% if metrics.recent_projects %}
+        <table class="data-table">
+          <thead>
+            <tr><th>Project</th><th>Designer</th><th>Created</th></tr>
+          </thead>
+          <tbody>
+            {% for p in metrics.recent_projects %}
+            <tr>
+              <td><strong>{{ p.title }}</strong></td>
+              <td>{{ p.designer_name }}</td>
+              <td>{{ p.created_at[:16].replace('T', ' ') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="empty">No projects yet.</p>
+      {% endif %}
+    </section>
+
+    <section class="card">
+      <div class="card-header">
+        <h2>Recent User Registrations</h2>
+      </div>
+      {% if metrics.recent_users %}
+        <table class="data-table">
+          <thead>
+            <tr><th>Name</th><th>Role</th><th>Status</th><th>Joined</th></tr>
+          </thead>
+          <tbody>
+            {% for u in metrics.recent_users %}
+            <tr>
+              <td>{{ u.name }}</td>
+              <td><span class="badge {{ u.role }}">{{ u.role.replace('_', ' ').title() }}</span></td>
+              <td><span class="badge status-{{ u.status }}">{{ u.status }}</span></td>
+              <td>{{ u.created_at[:16].replace('T', ' ') }}</td>
+            </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      {% else %}
+        <p class="empty">No users yet.</p>
+      {% endif %}
+    </section>
+
+    <section class="card quick-links">
+      <h2>Quick Actions</h2>
+      <div class="tiles">
+        <a class="tile" href="{{ url_for('platform_mgmt.categories') }}">
+          <strong>Categories</strong><span>Create, edit, manage project categories</span>
+        </a>
+        <a class="tile" href="{{ url_for('platform_mgmt.categories') }}#create">
+          <strong>New Category</strong><span>Add a new project category</span>
+        </a>
+        <a class="tile" href="{{ url_for('platform_mgmt.reports') }}">
+          <strong>Reports</strong><span>Daily / Weekly / Monthly reports</span>
+        </a>
+        <a class="tile" href="{{ url_for('platform_mgmt.users') }}">
+          <strong>User Management</strong><span>View & filter registered users</span>
+        </a>
+        <a class="tile" href="{{ url_for('platform_mgmt.idp_queue') }}">
+          <strong>IDP Queue</strong><span>Review pending project submissions</span>
+        </a>
+        <a class="tile" href="{{ url_for('platform_mgmt.designer_performance') }}">
+          <strong>Designer Performance</strong><span>Analytics & metrics</span>
+        </a>
+        <a class="tile" href="{{ url_for('platform_mgmt.platform_settings') }}">
+          <strong>Platform Settings</strong><span>Configure platform options</span>
+        </a>
+      </div>
+    </section>
+  </div>
+</div>
+{% endblock %}

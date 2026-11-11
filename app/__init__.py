@@ -43,7 +43,8 @@ def create_app(test_config=None):
     from app.boundary.review_page import bp as review_bp
     from app.boundary.customer_project_page import bp as customer_projects_bp
     from app.boundary.project_interest_page import bp as project_interest_bp
-    
+    from app.boundary.platform_mgmt_page import bp as platform_mgmt_bp
+
     app.register_blueprint(review_bp)
     app.register_blueprint(auth_bp)
     app.register_blueprint(home_bp)
@@ -51,8 +52,8 @@ def create_app(test_config=None):
     app.register_blueprint(admin_bp)
     app.register_blueprint(customer_projects_bp)
     app.register_blueprint(project_interest_bp)
-    # Register the blueprint with the app
     app.register_blueprint(consultation_bp)
+    app.register_blueprint(platform_mgmt_bp)
 
     @app.route("/uploads/<path:filename>")
     def uploaded_file(filename):

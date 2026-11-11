@@ -40,8 +40,27 @@
   </div>
 {% elif g.user.role == 'platform_manager' %}
   <div class="tiles">
-    <div class="tile todo"><strong>Categories</strong><span>Not built yet</span></div>
-    <div class="tile todo"><strong>Reports</strong><span>Not built yet</span></div>
+    <a class="tile" href="{{ url_for('platform_mgmt.dashboard') }}">
+      <strong>Dashboard</strong><span>Platform overview & metrics</span>
+    </a>
+    <a class="tile" href="{{ url_for('platform_mgmt.categories') }}">
+      <strong>Categories</strong><span>Create, edit, manage project categories</span>
+    </a>
+    <a class="tile" href="{{ url_for('platform_mgmt.reports') }}">
+      <strong>Reports</strong><span>Daily / Weekly / Monthly reports</span>
+    </a>
+    <a class="tile" href="{{ url_for('platform_mgmt.users') }}">
+      <strong>User Management</strong><span>View & filter registered users</span>
+    </a>
+    <a class="tile" href="{{ url_for('platform_mgmt.idp_queue') }}">
+      <strong>IDP Queue</strong><span>Review pending project submissions</span>
+    </a>
+    <a class="tile" href="{{ url_for('platform_mgmt.designer_performance') }}">
+      <strong>Designer Performance</strong><span>Analytics & metrics</span>
+    </a>
+    <a class="tile" href="{{ url_for('platform_mgmt.platform_settings') }}">
+      <strong>Platform Settings</strong><span>Configure platform options</span>
+    </a>
   </div>
 {% endif %}
 {% endblock %}

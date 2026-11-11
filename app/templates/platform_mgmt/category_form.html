@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block title %}{{ action }} Category{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>{{ action }} Category</h1>
+
+  <form method="post" class="form">
+    <div class="field">
+      <label for="name">Category Name <span class="required">*</span></label>
+      <input type="text" id="name" name="name" value="{{ category.name if category else '' }}" required maxlength="100" autofocus>
+      <p class="hint">Unique name for the category (e.g., Modern, Scandinavian, Kitchen)</p>
+    </div>
+
+    <div class="field checkbox-field">
+      <label class="check">
+        <input type="checkbox" name="is_active" value="1" {% if not category or category.is_active %}checked{% endif %}>
+        <span>Active</span>
+      </label>
+      <p class="hint">Inactive categories won't appear for project tagging but remain for reference</p>
+    </div>
+
+    <div class="form-actions">
+      <button type="submit" class="primary">{{ action }}</button>
+      <a class="button" href="{{ url_for('platform_mgmt.categories') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

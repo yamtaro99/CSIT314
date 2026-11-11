@@ -1,0 +1,97 @@
+{% extends "base.html" %}
+{% block title %}User Management{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>User Management</h1>
+</div>
+
+<!-- Filters -->
+<div class="card filters">
+  <form method="get" class="filter-form">
+    <div class="filter-row">
+      <div class="field">
+        <label for="search">Search</label>
+        <input type="text" id="search" name="search" value="{{ search or '' }}" placeholder="Name or email...">
+      </div>
+      <div class="field">
+        <label for="role">Role</label>
+        <select id="role" name="role">
+          <option value="">All Roles</option>
+          {% for r in role_options %}
+          <option value="{{ r }}" {% if role_filter == r %}selected{% endif %}>{{ r.replace('_', ' ').title() }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field">
+        <label for="status">Status</label>
+        <select id="status" name="status">
+          <option value="">All Statuses</option>
+          {% for s in status_options %}
+          <option value="{{ s }}" {% if status_filter == s %}selected{% endif %}>{{ s.title() }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="field" style="align-self: flex-end;">
+        <button type="submit" class="primary">Filter</button>
+        <a href="{{ url_for('platform_mgmt.users') }}" class="button">Clear</a>
+      </div>
+    </div>
+  </form>
+</div>
+
+<!-- Users Table -->
+<div class="card">
+  {% if users %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Name</th>
+          <th>Email</th>
+          <th>Role</th>
+          <th>Status</th>
+          <th>Projects</th>
+          <th>Joined</th>
+          <th>Last Login</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for u in users %}
+        <tr>
+          <td><strong>{{ u.name }}</strong></td>
+          <td>{{ u.email }}</td>
+          <td><span class="badge {{ u.role }}">{{ u.role.replace('_', ' ').title() }}</span></td>
+          <td><span class="badge status-{{ u.status }}">{{ u.status }}</span></td>
+          <td>{{ u.project_count or 0 }}</td>
+          <td>{{ u.created_at[:16].replace('T', ' ') if u.created_at else '—' }}</td>
+          <td>{{ u.last_login[:16].replace('T', ' ') if u.last_login else 'Never' }}</td>
+          <td class="actions">
+            <a class="button small" href="{{ url_for('platform_mgmt.user_detail', user_id=u.user_id) }}">View</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if pagination.total_pages > 1 %}
+  <nav class="pagination">
+    {% if pagination.page > 1 %}
+      <a class="button small" href="{{ url_for('platform_mgmt.users', page=pagination.page-1, role=role_filter, status=status_filter, search=search) }}">« Previous</a>
+    {% endif %}
+    <span class="pagination-info">
+      Page {{ pagination.page }} of {{ pagination.total_pages }} ({{ pagination.total }} total)
+    </span>
+    {% if pagination.page < pagination.total_pages %}
+      <a class="button small" href="{{ url_for('platform_mgmt.users', page=pagination.page+1, role=role_filter, status=status_filter, search=search) }}">Next »</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <p class="empty">No users match the current filters.</p>
+  {% endif %}
+</div>
+{% endblock %}

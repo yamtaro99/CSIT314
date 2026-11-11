@@ -1,0 +1,135 @@
+{% extends "base.html" %}
+{% block title %}{{ designer.name }} - Performance Detail{% endblock %}
+{% block content %}
+<div class="designer-detail-page">
+  <div class="page-header">
+    <h1>{{ designer.name }}</h1>
+    <p class="muted">{{ designer.email }} • Joined {{ designer.created_at[:16].replace('T', ' ') if designer.created_at else '—' }}</p>
+  </div>
+
+  <div class="tiles">
+    <div class="tile">
+      <strong>Total Projects</strong>
+      <span>{{ projects|length }}</span>
+    </div>
+    <div class="tile success">
+      <strong>Active Projects</strong>
+      <span>{{ projects|selectattr('status', 'equalto', 'active')|list|length }}</span>
+    </div>
+    <div class="tile warning">
+      <strong>Pending Projects</strong>
+      <span>{{ projects|selectattr('status', 'equalto', 'pending')|list|length }}</span>
+    </div>
+    <div class="tile danger">
+      <strong>Rejected Projects</strong>
+      <span>{{ projects|selectattr('status', 'equalto', 'rejected')|list|length }}</span>
+    </div>
+    <div class="tile">
+      <strong>Approved Reviews</strong>
+      <span>{{ reviews|selectattr('status', 'equalto', 'approved')|list|length }}</span>
+    </div>
+    <div class="tile">
+      <strong>Avg Rating</strong>
+      <span>{% set approved = reviews|selectattr('status', 'equalto', 'approved')|list %}{% if approved %}{{ (approved|map(attribute='rating')|sum / approved|length)|round(1) }}{% else %}—{% endif %}</span>
+    </div>
+  </div>
+
+  {% if company %}
+  <section class="card">
+    <div class="card-header"><h2>Company Information</h2></div>
+    <table class="data-table">
+      <tbody>
+        <tr><th>Registration No</th><td>{{ company.registration_no }}</td></tr>
+        <tr><th>Address</th><td>{{ company.address or '—' }}</td></tr>
+        <tr><th>Phone</th><td>{{ company.phone or '—' }}</td></tr>
+        <tr><th>Description</th><td>{{ company.description or '—' }}</td></tr>
+      </tbody>
+    </table>
+  </section>
+  {% endif %}
+
+  <section class="card">
+    <div class="card-header"><h2>Projects</h2></div>
+    {% if projects %}
+    <table class="data-table">
+      <thead>
+        <tr><th>Title</th><th>Status</th><th>Created</th><th>Updated</th></tr>
+      </thead>
+      <tbody>
+        {% for p in projects %}
+        <tr>
+          <td><strong>{{ p.title }}</strong></td>
+          <td><span class="badge status-{{ p.status }}">{{ p.status }}</span></td>
+          <td>{{ p.created_at[:16].replace('T', ' ') }}</td>
+          <td>{{ p.updated_at[:16].replace('T', ' ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No projects yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <div class="card-header"><h2>Reviews</h2></div>
+    {% if reviews %}
+    <table class="data-table">
+      <thead>
+        <tr><th>Rating</th><th>Comment</th><th>Status</th><th>Submitted</th></tr>
+      </thead>
+      <tbody>
+        {% for r in reviews %}
+        <tr>
+          <td>{{ '★' * r.rating }}</td>
+          <td>{{ r.comment }}</td>
+          <td><span class="badge status-{{ r.status }}">{{ r.status }}</span></td>
+          <td>{{ r.submitted_at[:16].replace('T', ' ') }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% else %}
+    <p class="empty">No reviews yet.</p>
+    {% endif %}
+  </section>
+
+  <section class="card">
+    <div class="card-header"><h2>Engagement Trends (Last 30 Days)</h2></div>
+    <div class="chart-row">
+      <div class="chart">
+        <h3>Project Views</h3>
+        {% if views_over_time %}
+        <table class="data-table small">
+          <thead><tr><th>Date</th><th>Views</th></tr></thead>
+          <tbody>
+            {% for v in views_over_time %}
+            <tr><td>{{ v.view_date }}</td><td>{{ v.count }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No view data for the last 30 days.</p>
+        {% endif %}
+      </div>
+      <div class="chart">
+        <h3>Shortlists</h3>
+        {% if shortlists_over_time %}
+        <table class="data-table small">
+          <thead><tr><th>Date</th><th>Shortlists</th></tr></thead>
+          <tbody>
+            {% for s in shortlists_over_time %}
+            <tr><td>{{ s.event_date }}</td><td>{{ s.count }}</td></tr>
+            {% endfor %}
+          </tbody>
+        </table>
+        {% else %}
+        <p class="empty">No shortlist data for the last 30 days.</p>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <a href="{{ url_for('platform_mgmt.designer_performance') }}" class="button secondary">Back to All Designers</a>
+</div>
+{% endblock %}

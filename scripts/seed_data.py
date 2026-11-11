@@ -89,6 +89,30 @@ def seed_projects(conn):
                 conn.execute("INSERT INTO project_category (project_id, category_id) VALUES (?, ?)",
                              (cur.lastrowid, category_id))
 
+    # Add a few pending projects for IDP queue testing (UC-07/08)
+    pending_designers = [r[0] for r in conn.execute(
+        "SELECT user_id FROM user_account WHERE role = 'interior_designer' AND status = 'pending'")][:5]
+    pending_titles = [
+        ("Minimalist Kitchen in Tampines", "A clean, minimalist kitchen renovation with handleless cabinets and integrated appliances."),
+        ("Japandi Living Room in Punggol", "Warm Japandi style living room with natural wood tones and soft textiles."),
+        ("Industrial Loft Bedroom in Jurong West", "Exposed brick, metal accents, and concrete finishes for an industrial vibe."),
+        ("Modern Bathroom in Bishan", "Sleek modern bathroom with frameless glass shower and floating vanity."),
+        ("Scandinavian Study in Woodlands", "Bright Scandinavian home office with built-in storage and ergonomic lighting."),
+    ]
+    for i, designer_id in enumerate(pending_designers):
+        title, desc = pending_titles[i % len(pending_titles)]
+        location = RNG.choice(LOCATIONS)
+        completion = today + timedelta(days=RNG.randint(30, 180))
+        created = rand_dt(10)
+        cur = conn.execute(
+            "INSERT INTO project (designer_id, title, description, location, completion_date,"
+            " status, created_at, updated_at) VALUES (?, ?, ?, ?, ?, 'pending', ?, ?)",
+            (designer_id, title, desc, location, completion.isoformat(), created, created),
+        )
+        for category_id in RNG.sample(category_ids, RNG.randint(1, 2)):
+            conn.execute("INSERT INTO project_category (project_id, category_id) VALUES (?, ?)",
+                         (cur.lastrowid, category_id))
+
 
 def seed_companies(conn):
     designers = conn.execute(

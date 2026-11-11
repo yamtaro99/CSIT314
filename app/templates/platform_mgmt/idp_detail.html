@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+{% block title %}{{ project.title }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{{ project.title }}</h1>
+  <a class="button" href="{{ url_for('platform_mgmt.idp_queue') }}">← Back to Queue</a>
+</div>
+
+<div class="detail-grid">
+  <!-- Project Info -->
+  <section class="card">
+    <h2>Project Details</h2>
+    <dl>
+      <dt>Designer</dt>
+      <dd>{{ project.designer_name }} ({{ project.designer_email }})</dd>
+      <dt>Location</dt>
+      <dd>{{ project.location }}</dd>
+      <dt>Completion Date</dt>
+      <dd>{{ project.completion_date }}</dd>
+      <dt>Status</dt>
+      <dd><span class="badge status-{{ project.status }}">{{ project.status }}</span></dd>
+      <dt>Submitted</dt>
+      <dd>{{ project.created_at[:16].replace('T', ' ') }}</dd>
+      <dt>Last Updated</dt>
+      <dd>{{ project.updated_at[:16].replace('T', ' ') if project.updated_at else '—' }}</dd>
+    </dl>
+  </section>
+
+  <!-- Description -->
+  <section class="card full-width">
+    <h2>Description</h2>
+    <div class="prose">{{ project.description }}</div>
+  </section>
+
+  <!-- Categories -->
+  {% if project.categories %}
+  <section class="card">
+    <h2>Categories ({{ project.categories|length }})</h2>
+    <div class="tag-list">
+      {% for c in project.categories %}
+      <span class="tag">{{ c.name }}</span>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+
+  <!-- Photos -->
+  {% if project.photos %}
+  <section class="card">
+    <h2>Photos ({{ project.photos|length }})</h2>
+    <div class="photo-grid">
+      {% for photo in project.photos %}
+      <div class="photo-item">
+        <img src="{{ photo.file_url }}" alt="{{ photo.caption or 'Project photo' }}" loading="lazy">
+        {% if photo.caption %}
+        <p class="caption">{{ photo.caption }}</p>
+        {% endif %}
+      </div>
+      {% endfor %}
+    </div>
+  </section>
+  {% endif %}
+</div>
+
+<!-- Actions -->
+<section class="card actions-bar">
+  <form method="post" action="{{ url_for('platform_mgmt.idp_approve', project_id=project.project_id) }}" style="display:inline;">
+    <button type="submit" class="button success" onclick="return confirm('Approve this project? This will publish it to the platform.')">
+      ✓ Approve & Publish
+    </button>
+  </form>
+  <form method="post" action="{{ url_for('platform_mgmt.idp_reject', project_id=project.project_id) }}" style="display:inline;">
+    <button type="submit" class="button danger" onclick="return confirm('Reject this project? The designer will be notified.')">
+      ✗ Reject
+    </button>
+  </form>
+</section>
+{% endblock %}

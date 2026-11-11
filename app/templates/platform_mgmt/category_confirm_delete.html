@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Delete Category{% endblock %}
+{% block content %}
+<div class="card confirm-delete">
+  <h1>Delete Category</h1>
+
+  <p class="warning">Are you sure you want to delete <strong>"{{ category.name }}"</strong>?</p>
+
+  <p>This category is currently used by active projects. It will be <strong>deactivated</strong> instead of permanently deleted — it will no longer appear for new project tagging but will remain on existing projects.</p>
+
+  <form method="post">
+    <div class="form-actions">
+      <button type="submit" class="primary danger">Confirm Deactivate</button>
+      <a class="button" href="{{ url_for('platform_mgmt.categories') }}">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

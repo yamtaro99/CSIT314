@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+{% block title %}Designer Performance{% endblock %}
+{% block content %}
+<div class="designer-perf-page">
+  <div class="page-header">
+    <h1>Designer Performance</h1>
+    <p class="muted">View performance metrics for all interior designers</p>
+  </div>
+
+  {% if designers %}
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Designer</th>
+        <th>Company</th>
+        <th>Total Projects</th>
+        <th>Active</th>
+        <th>Approval Rate</th>
+        <th>Avg Rating</th>
+        <th>Reviews</th>
+        <th>Views</th>
+        <th>Shortlists</th>
+        <th>Joined</th>
+        <th>Actions</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for d in designers %}
+      <tr>
+        <td>
+          <strong>{{ d.name }}</strong><br>
+          <small class="muted">{{ d.email }}</small>
+        </td>
+        <td>{{ d.company_name or '—' }}</td>
+        <td>{{ d.total_projects }}</td>
+        <td>{{ d.active_projects }}</td>
+        <td><span class="badge">{{ d.approval_rate }}%</span></td>
+        <td>{{ d.avg_rating if d.avg_rating is not none else '—' }}</td>
+        <td>{{ d.total_reviews }}</td>
+        <td>{{ d.total_views }}</td>
+        <td>{{ d.total_shortlists }}</td>
+        <td>{{ d.joined_at }}</td>
+        <td>
+          <a class="button small" href="{{ url_for('platform_mgmt.designer_performance_detail', designer_id=d.designer_id) }}">View Details</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+  {% else %}
+  <div class="empty-state">
+    <p>No interior designers found on the platform.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

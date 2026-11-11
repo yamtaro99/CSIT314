@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+{% block title %}IDP Queue{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>IDP Review Queue</h1>
+  <p class="subtitle">Projects awaiting moderation: {{ pagination.total }}</p>
+</div>
+
+<div class="card">
+  {% if projects %}
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Project</th>
+          <th>Designer</th>
+          <th>Categories</th>
+          <th>Location</th>
+          <th>Completion</th>
+          <th>Submitted</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for p in projects %}
+        <tr>
+          <td>
+            <a href="{{ url_for('platform_mgmt.idp_detail', project_id=p.project_id) }}"><strong>{{ p.title }}</strong></a>
+          </td>
+          <td>
+            {{ p.designer_name }}<br>
+            <small>{{ p.designer_email }}</small>
+          </td>
+          <td>{{ p.category_names or '—' }}</td>
+          <td>{{ p.location }}</td>
+          <td>{{ p.completion_date }}</td>
+          <td>{{ p.created_at[:16].replace('T', ' ') }}</td>
+          <td class="actions">
+            <form method="post" action="{{ url_for('platform_mgmt.idp_approve', project_id=p.project_id) }}" style="display:inline;">
+              <button type="submit" class="button small success" onclick="return confirm('Approve this project?')">Approve</button>
+            </form>
+            <form method="post" action="{{ url_for('platform_mgmt.idp_reject', project_id=p.project_id) }}" style="display:inline;">
+              <button type="submit" class="button small danger" onclick="return confirm('Reject this project?')">Reject</button>
+            </form>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if pagination.total_pages > 1 %}
+  <nav class="pagination">
+    {% if pagination.page > 1 %}
+      <a class="button small" href="{{ url_for('platform_mgmt.idp_queue', page=pagination.page-1) }}">« Previous</a>
+    {% endif %}
+    <span class="pagination-info">
+      Page {{ pagination.page }} of {{ pagination.total_pages }} ({{ pagination.total }} total)
+    </span>
+    {% if pagination.page < pagination.total_pages %}
+      <a class="button small" href="{{ url_for('platform_mgmt.idp_queue', page=pagination.page+1) }}">Next »</a>
+    {% endif %}
+  </nav>
+  {% endif %}
+
+  {% else %}
+  <p class="empty">No pending projects in the queue.</p>
+  {% endif %}
+</div>
+{% endblock %}

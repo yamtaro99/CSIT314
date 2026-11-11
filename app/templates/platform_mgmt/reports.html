@@ -1,0 +1,60 @@
+{% extends "base.html" %}
+{% block title %}Reports{% endblock %}
+{% block content %}
+<div class="reports-page">
+  <div class="page-header">
+    <h1>Platform Reports</h1>
+    <p class="muted">Generate and view platform activity reports</p>
+  </div>
+
+  <div class="tiles">
+    <a class="tile" href="{{ url_for('platform_mgmt.daily_report') }}">
+      <strong>Daily Report</strong>
+      <span>Yesterday's platform activity summary</span>
+    </a>
+    <a class="tile" href="{{ url_for('platform_mgmt.weekly_report') }}">
+      <strong>Weekly Report</strong>
+      <span>Last 7 days activity and trends</span>
+    </a>
+    <a class="tile" href="{{ url_for('platform_mgmt.monthly_report') }}">
+      <strong>Monthly Report</strong>
+      <span>Last 30 days comprehensive metrics</span>
+    </a>
+  </div>
+
+  <section class="card">
+    <div class="card-header">
+      <h2>Report Types</h2>
+    </div>
+    <div class="report-types">
+      <article class="report-type">
+        <h3>Daily Report</h3>
+        <ul>
+          <li>Projects created, approved, rejected</li>
+          <li>New user registrations (by role)</li>
+          <li>Project views and shortlists</li>
+          <li>Defaults to yesterday's data</li>
+        </ul>
+      </article>
+      <article class="report-type">
+        <h3>Weekly Report</h3>
+        <ul>
+          <li>All daily metrics aggregated</li>
+          <li>7-day trend overview</li>
+          <li>User growth comparison</li>
+          <li>Custom date range supported</li>
+        </ul>
+      </article>
+      <article class="report-type">
+        <h3>Monthly Report</h3>
+        <ul>
+          <li>Comprehensive 30-day analysis</li>
+          <li>Designer onboarding metrics</li>
+          <li>Platform engagement trends</li>
+          <li>Custom date range supported</li>
+        </ul>
+      </article>
+    </div>
+  </section>
+</div>
+{% endblock %}

@@ -1,0 +1,98 @@
+{% extends "base.html" %}
+{% block title %}{{ user.name }}{% endblock %}
+{% block content %}
+<div class="page-header">
+  <h1>{{ user.name }}</h1>
+  <a class="button" href="{{ url_for('platform_mgmt.users') }}">← Back to Users</a>
+</div>
+
+<div class="detail-grid">
+  <!-- Profile Card -->
+  <section class="card profile">
+    <h2>Profile</h2>
+    <dl>
+      <dt>Email</dt><dd>{{ user.email }}</dd>
+      <dt>Role</dt><dd><span class="badge {{ user.role }}">{{ user.role.replace('_', ' ').title() }}</span></dd>
+      <dt>Status</dt>
+      <dd>
+        <form method="post" action="{{ url_for('platform_mgmt.update_user_status', user_id=user.user_id) }}" style="display: inline;">
+          <select name="status" onchange="this.form.submit()">
+            {% for s in status_options %}
+            <option value="{{ s }}" {% if user.status == s %}selected{% endif %}>{{ s.title() }}</option>
+            {% endfor %}
+          </select>
+          <noscript><button type="submit" class="button small">Update</button></noscript>
+        </form>
+      </dd>
+      <dt>Joined</dt><dd>{{ user.created_at[:16].replace('T', ' ') if user.created_at else '—' }}</dd>
+      <dt>Last Login</dt><dd>{{ user.last_login[:16].replace('T', ' ') if user.last_login else 'Never' }}</dd>
+    </dl>
+  </section>
+
+  <!-- Stats Card -->
+  <section class="card stats">
+    <h2>Quick Stats</h2>
+    <dl>
+      {% if user.role == 'interior_designer' %}
+        <dt>Active Projects</dt><dd>{{ projects|length }}</dd>
+        <dt>Total Reviews</dt><dd>{{ reviews|length }}</dd>
+        {% set avg_rating = (reviews|selectattr('rating')|map(attribute='rating')|sum / reviews|length) if reviews else 0 %}
+        <dt>Avg Rating</dt><dd>{{ "%.1f"|format(avg_rating) if avg_rating else '—' }}</dd>
+      {% elif user.role == 'customer' %}
+        <dt>Shortlisted Projects</dt><dd>{{ shortlist_count }}</dd>
+      {% endif %}
+    </dl>
+  </section>
+</div>
+
+<!-- Projects (for designers) -->
+{% if projects %}
+<section class="card">
+  <div class="card-header">
+    <h2>Projects ({{ projects|length }})</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr><th>Title</th><th>Status</th><th>Created</th></tr>
+      </thead>
+      <tbody>
+        {% for p in projects %}
+        <tr>
+          <td><strong>{{ p.title }}</strong></td>
+          <td><span class="badge status-{{ p.status }}">{{ p.status }}</span></td>
+          <td>{{ p.created_at[:16].replace('T', ' ') if p.created_at else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+
+<!-- Reviews (for designers) -->
+{% if reviews %}
+<section class="card">
+  <div class="card-header">
+    <h2>Reviews ({{ reviews|length }})</h2>
+  </div>
+  <div class="table-responsive">
+    <table class="data-table">
+      <thead>
+        <tr><th>Rating</th><th>Comment</th><th>Status</th><th>Submitted</th></tr>
+      </thead>
+      <tbody>
+        {% for r in reviews %}
+        <tr>
+          <td>{{ "★" * r.rating }}</td>
+          <td>{{ r.comment }}</td>
+          <td><span class="badge status-{{ r.status }}">{{ r.status }}</span></td>
+          <td>{{ r.submitted_at[:16].replace('T', ' ') if r.submitted_at else '—' }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+</section>
+{% endif %}
+{% endblock %}

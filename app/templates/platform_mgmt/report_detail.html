@@ -1,0 +1,96 @@
+{% extends "base.html" %}
+{% block title %}{{ period_type.title() }} Report{% endblock %}
+{% block content %}
+<div class="report-page">
+  <div class="page-header">
+    <h1>{{ period_type.title() }} Report</h1>
+    <p class="muted">
+      {% if period_type == "daily" %}
+        Activity summary for {{ report.period_start if report else default_date or 'yesterday' }}
+      {% else %}
+        {{ report.period_start if report else default_start or 'start' }} to {{ report.period_end if report else default_end or 'end' }}
+      {% endif %}
+    </p>
+  </div>
+
+  <form method="GET" class="report-form">
+    {% if period_type == "daily" %}
+      <div class="form-group">
+        <label for="date">Date</label>
+        <input type="date" id="date" name="date" value="{{ default_date or '' }}" max="{{ (report.period_end[:10] if report else '' ) }}">
+      </div>
+    {% else %}
+      <div class="form-row">
+        <div class="form-group">
+          <label for="start_date">Start Date</label>
+          <input type="date" id="start_date" name="start_date" value="{{ default_start or '' }}">
+        </div>
+        <div class="form-group">
+          <label for="end_date">End Date</label>
+          <input type="date" id="end_date" name="end_date" value="{{ default_end or '' }}">
+        </div>
+      </div>
+    {% endif %}
+    <button type="submit" class="button">Generate</button>
+    <a href="{{ url_for('platform_mgmt.reports') }}" class="button secondary">Back to Reports</a>
+  </form>
+
+  {% if report %}
+  <div class="metrics-grid">
+    <div class="metric-card">
+      <div class="metric-value">{{ report.projects_created }}</div>
+      <div class="metric-label">Projects Created</div>
+    </div>
+    <div class="metric-card success">
+      <div class="metric-value">{{ report.projects_approved }}</div>
+      <div class="metric-label">Projects Approved</div>
+    </div>
+    <div class="metric-card danger">
+      <div class="metric-value">{{ report.projects_rejected }}</div>
+      <div class="metric-label">Projects Rejected</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">{{ report.users_registered }}</div>
+      <div class="metric-label">New Users</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">{{ report.designers_registered }}</div>
+      <div class="metric-label">New Designers</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">{{ report.customers_registered }}</div>
+      <div class="metric-label">New Customers</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">{{ report.total_views }}</div>
+      <div class="metric-label">Project Views</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-value">{{ report.total_shortlists }}</div>
+      <div class="metric-label">Shortlists</div>
+    </div>
+  </div>
+
+  <section class="card">
+    <div class="card-header">
+      <h2>Period Details</h2>
+    </div>
+    <table class="data-table">
+      <thead>
+        <tr><th>Metric</th><th>Value</th></tr>
+      </thead>
+      <tbody>
+        <tr><td>Period Start</td><td>{{ report.period_start }}</td></tr>
+        <tr><td>Period End</td><td>{{ report.period_end }}</td></tr>
+        <tr><td>Report Type</td><td>{{ period_type.title() }}</td></tr>
+      </tbody>
+    </table>
+  </section>
+
+  {% else %}
+  <div class="empty-state">
+    <p>No data available for the selected period.</p>
+  </div>
+  {% endif %}
+</div>
+{% endblock %}

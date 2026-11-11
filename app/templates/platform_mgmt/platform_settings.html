@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block title %}Platform Settings{% endblock %}
+{% block content %}
+<div class="settings-page">
+  <div class="page-header">
+    <h1>Platform Settings</h1>
+    <p class="muted">Configure platform-wide settings</p>
+  </div>
+
+  <form method="POST" class="settings-form">
+    <section class="card">
+      <div class="card-header"><h2>General</h2></div>
+      <div class="form-grid">
+        <div class="form-group">
+          <label for="site_name">Site Name</label>
+          <input type="text" id="site_name" name="site_name" value="{{ settings.site_name.value }}">
+          <small class="muted">{{ settings.site_name.description }}</small>
+        </div>
+        <div class="form-group">
+          <label for="site_description">Site Description</label>
+          <input type="text" id="site_description" name="site_description" value="{{ settings.site_description.value }}">
+          <small class="muted">{{ settings.site_description.description }}</small>
+        </div>
+        <div class="form-group">
+          <label for="max_projects_per_designer">Max Projects Per Designer</label>
+          <input type="number" id="max_projects_per_designer" name="max_projects_per_designer" value="{{ settings.max_projects_per_designer.value }}" min="1">
+          <small class="muted">{{ settings.max_projects_per_designer.description }}</small>
+        </div>
+        <div class="form-group">
+          <label for="session_timeout_minutes">Session Timeout (minutes)</label>
+          <input type="number" id="session_timeout_minutes" name="session_timeout_minutes" value="{{ settings.session_timeout_minutes.value }}" min="5">
+          <small class="muted">{{ settings.session_timeout_minutes.description }}</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header"><h2>Notifications</h2></div>
+      <div class="form-grid">
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" name="enable_notifications" value="true" {% if settings.enable_notifications.value == 'true' %}checked{% endif %}>
+            <span>Enable Email Notifications</span>
+          </label>
+          <small class="muted">{{ settings.enable_notifications.description }}</small>
+        </div>
+        <div class="form-group">
+          <label for="notification_email">Notification Email</label>
+          <input type="email" id="notification_email" name="notification_email" value="{{ settings.notification_email.value }}">
+          <small class="muted">{{ settings.notification_email.description }}</small>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-header"><h2>Platform Status</h2></div>
+      <div class="form-grid">
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" name="maintenance_mode" value="true" {% if settings.maintenance_mode.value == 'true' %}checked{% endif %}>
+            <span>Maintenance Mode</span>
+          </label>
+          <small class="muted">{{ settings.maintenance_mode.description }}</small>
+        </div>
+        <div class="form-group checkbox-group">
+          <label class="checkbox-label">
+            <input type="checkbox" name="allow_new_registrations" value="true" {% if settings.allow_new_registrations.value == 'true' %}checked{% endif %}>
+            <span>Allow New Registrations</span>
+          </label>
+          <small class="muted">{{ settings.allow_new_registrations.description }}</small>
+        </div>
+      </div>
+    </section>
+
+    <div class="form-actions">
+      <button type="submit" class="button">Save Changes</button>
+      <a href="{{ url_for('platform_mgmt.dashboard') }}" class="button secondary">Cancel</a>
+    </div>
+  </form>
+</div>
+{% endblock %}
