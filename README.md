@@ -9,9 +9,8 @@ You need Python 3.10 or newer.
 
 ```bash
 pip install -r requirements.txt
-python scripts/seed_data.py          # builds the database with ~200 users and ~220 projects
-python scripts/seed_project_interest.py # populate database for project interest
-python scripts/create_project_report_table.py  # ensures the UC37 report table exists
+python scripts/seed_data.py
+python scripts/seed_project_interest.py
 python -m flask --app app run --debug
 ```
 
@@ -30,14 +29,28 @@ Open http://localhost:5000 and log in with any seeded account. All of them use t
 python -m pytest -v
 ```
 
-GitHub Actions runs the same tests on every push and pull request (`.github/workflows/ci.yml`).
+## CI/CD
 
-## Deployment
+The pipeline in `.github/workflows/ci.yml` runs on every push and pull request to `main`:
 
-Pushes to `main` that pass the tests trigger a deploy to Render.com (`render.yaml`). To set it up:
-create a Render web service from this repo, turn off its "Auto-Deploy", and add the service's deploy hook URL
-to GitHub as the repository secret `RENDER_DEPLOY_HOOK_URL`. The free plan has no persistent disk, so the
-test data is rebuilt on every start.
+| Stage | Runs on | What it does |
+|---|---|---|
+| Test | every push and PR | Runs all unit tests, uploads the test report, checks the test data scripts |
+| Build and smoke test | every push and PR | Builds the Docker image, starts it and checks the login page loads |
+| Publish image | push to `main` | Pushes the image to GitHub Container Registry as `latest` and the commit SHA |
+| Deploy to Render | push to `main` | Triggers a Render deploy (skipped until `RENDER_DEPLOY_HOOK_URL` is set) |
+
+Each stage only runs if the one before it passed.
+
+Run the published image:
+
+```bash
+docker run -p 8000:8000 ghcr.io/yamtaro99/csit314:latest
+```
+
+To turn on the Render deploy, create a Render Blueprint from this repo (it reads `render.yaml`),
+copy the service's deploy hook URL, and add it to GitHub as the repository secret `RENDER_DEPLOY_HOOK_URL`.
+The free plan has no persistent disk, so the test data is rebuilt on every start.
 
 ## Project layout
 
@@ -48,7 +61,8 @@ app/
   entity/       domain classes that hold data and save/load themselves
   templates/    HTML for the boundaries
   schema.sql    all database tables
-scripts/seed_data.py   random test data generator
+scripts/       test data generators
+Dockerfile     container image used by CI/CD and Render
 tests/          pytest unit tests (one file per use case)
 docs/           diagrams and use case descriptions
 ```

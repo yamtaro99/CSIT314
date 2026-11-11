@@ -5,33 +5,112 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
+  workflow_dispatch:
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   test:
+    name: Test
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - uses: actions/setup-python@v5
         with:
           python-version: "3.10"
           cache: pip
-      - run: pip install -r requirements.txt
-      - name: Run unit tests
-        run: python -m pytest -v
-      - name: Check the test data script still works
-        run: python scripts/seed_data.py
 
-  deploy:
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Run unit tests
+        run: python -m pytest -v --junitxml=test-results.xml
+
+      - name: Upload test report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-report
+          path: test-results.xml
+
+      - name: Check test data scripts
+        run: |
+          python scripts/seed_data.py
+          python scripts/seed_project_interest.py
+
+  build:
+    name: Build and smoke test
     needs: test
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build -t ideal:ci .
+
+      - name: Start container
+        run: docker run -d --name ideal -p 8000:8000 ideal:ci
+
+      - name: Check the app responds
+        run: |
+          for i in $(seq 1 30); do
+            if curl -fs http://localhost:8000/login > /dev/null; then
+              echo "App is up"
+              exit 0
+            fi
+            sleep 2
+          done
+          docker logs ideal
+          exit 1
+
+  deliver:
+    name: Publish image
+    needs: build
     if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ghcr.io/${{ github.repository }}
+          tags: |
+            type=raw,value=latest
+            type=sha
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+  deploy:
+    name: Deploy to Render
+    needs: deliver
+    runs-on: ubuntu-latest
+    environment:
+      name: production
     steps:
       - name: Trigger Render deploy
         env:
           DEPLOY_HOOK: ${{ secrets.RENDER_DEPLOY_HOOK_URL }}
         run: |
           if [ -z "$DEPLOY_HOOK" ]; then
-            echo "RENDER_DEPLOY_HOOK_URL secret not set yet - skipping deploy."
+            echo "RENDER_DEPLOY_HOOK_URL is not set, skipping deploy."
             exit 0
           fi
           curl -fsS -X POST "$DEPLOY_HOOK"

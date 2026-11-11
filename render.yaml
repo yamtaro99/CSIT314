@@ -1,12 +1,10 @@
 services:
   - type: web
     name: ideal
-    runtime: python
+    runtime: docker
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python scripts/seed_data.py && gunicorn "app:create_app()"
+    dockerfilePath: ./Dockerfile
+    autoDeploy: false
     envVars:
       - key: SECRET_KEY
         generateValue: true
-      - key: PYTHON_VERSION
-        value: 3.10.14
