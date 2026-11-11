@@ -10,7 +10,6 @@ class Company:
         self.address = address
         self.phone = phone
         self.description = description
-    
 
     @classmethod
     def _from_row(cls, row):

@@ -10,17 +10,14 @@ class PlatformDashboardController:
         self.errors = []
 
     def get_metrics(self):
-        """Return key platform metrics for the dashboard."""
         conn = get_db()
         try:
             metrics = {}
 
-            # Total projects
             metrics["total_projects"] = conn.execute(
                 "SELECT COUNT(*) FROM project WHERE status = 'active'"
             ).fetchone()[0]
 
-            # Total users by role
             metrics["total_designers"] = conn.execute(
                 "SELECT COUNT(*) FROM user_account WHERE role = 'interior_designer' AND status = 'active'"
             ).fetchone()[0]
@@ -33,17 +30,14 @@ class PlatformDashboardController:
                 "SELECT COUNT(*) FROM user_account WHERE role = 'interior_designer' AND status = 'pending'"
             ).fetchone()[0]
 
-            # Pending IDPs (projects awaiting moderation)
             metrics["pending_projects"] = conn.execute(
                 "SELECT COUNT(*) FROM project WHERE status = 'pending'"
             ).fetchone()[0]
 
-            # Total categories
             metrics["total_categories"] = conn.execute(
                 "SELECT COUNT(*) FROM category WHERE is_active = 1"
             ).fetchone()[0]
 
-            # Recent activity: last 10 project creations
             recent_projects = conn.execute(
                 "SELECT p.project_id, p.title, p.created_at, u.name as designer_name "
                 "FROM project p "
@@ -53,7 +47,6 @@ class PlatformDashboardController:
             ).fetchall()
             metrics["recent_projects"] = [dict(r) for r in recent_projects]
 
-            # Recent user registrations
             recent_users = conn.execute(
                 "SELECT user_id, name, role, status, created_at "
                 "FROM user_account "
@@ -73,7 +66,6 @@ class CategoryController:
         self.errors = []
 
     def get_all_categories(self):
-        """Return all categories (active and inactive) for management view."""
         conn = get_db()
         rows = conn.execute(
             "SELECT * FROM category ORDER BY is_active DESC, name"
@@ -81,16 +73,13 @@ class CategoryController:
         return [Category._from_row(r) for r in rows]
 
     def get_active_categories(self):
-        """Return only active categories for project tagging."""
         return Category.get_active_categories()
 
     def create_category(self, name, is_active=True):
-        """Create a new category."""
         if not (name or "").strip():
             self.errors.append("Category name cannot be empty")
             return None
 
-        # Parse checkbox value: "on", "1", "true" (case-insensitive) -> True; anything else -> False
         if isinstance(is_active, str):
             is_active = is_active.lower() in ("1", "on", "true", "yes")
         else:
@@ -107,12 +96,10 @@ class CategoryController:
         return cat
 
     def update_category(self, category_id, name, is_active):
-        """Update an existing category."""
         if not (name or "").strip():
             self.errors.append("Category name cannot be empty")
             return False
 
-        # Parse checkbox value: "on", "1", "true" (case-insensitive) -> True; anything else -> False
         if isinstance(is_active, str):
             is_active = is_active.lower() in ("1", "on", "true", "yes")
         else:
@@ -120,7 +107,6 @@ class CategoryController:
 
         conn = get_db()
         try:
-            # Check if another category has this name
             existing = conn.execute(
                 "SELECT category_id FROM category WHERE name = ? AND category_id != ?",
                 (name.strip(), category_id)
@@ -141,10 +127,8 @@ class CategoryController:
             return False
 
     def delete_category(self, category_id):
-        """Soft delete (deactivate) a category. Hard delete only if unused."""
         conn = get_db()
         try:
-            # Check if category is used by any active projects
             in_use = conn.execute(
                 "SELECT 1 FROM project_category pc "
                 "JOIN project p ON pc.project_id = p.project_id "
@@ -153,7 +137,6 @@ class CategoryController:
             ).fetchone()
 
             if in_use:
-                # Soft delete - just deactivate
                 conn.execute(
                     "UPDATE category SET is_active = 0 WHERE category_id = ?",
                     (category_id,)
@@ -162,7 +145,6 @@ class CategoryController:
                 self.errors.append("Category is in use; deactivated instead of deleted")
                 return "deactivated"
             else:
-                # Hard delete - safe to remove
                 conn.execute("DELETE FROM category WHERE category_id = ?", (category_id,))
                 conn.commit()
                 return "deleted"
@@ -189,7 +171,6 @@ class UserManagementController:
         self.errors = []
 
     def get_users(self, role_filter=None, status_filter=None, search=None, page=1, per_page=20):
-        """Return paginated, filtered list of users."""
         conn = get_db()
         try:
             where_clauses = []
@@ -209,12 +190,10 @@ class UserManagementController:
 
             where_sql = "WHERE " + " AND ".join(where_clauses) if where_clauses else ""
 
-            # Total count for pagination
             total = conn.execute(
                 f"SELECT COUNT(*) FROM user_account {where_sql}", params
             ).fetchone()[0]
 
-            # Paginated results with project count
             offset = (page - 1) * per_page
             params_with_limit = params + [per_page, offset]
             rows = conn.execute(
@@ -244,7 +223,6 @@ class UserManagementController:
             return {"users": [], "total": 0, "page": 1, "per_page": per_page, "total_pages": 0}
 
     def get_user_detail(self, user_id):
-        """Get detailed view of a single user including their projects."""
         conn = get_db()
         try:
             user_row = conn.execute(
@@ -255,7 +233,6 @@ class UserManagementController:
 
             user = UserAccount._from_row(user_row)
 
-            # Get projects if designer
             projects = []
             if user.role == UserAccount.INTERIOR_DESIGNER:
                 proj_rows = conn.execute(
@@ -264,7 +241,6 @@ class UserManagementController:
                 ).fetchall()
                 projects = [dict(r) for r in proj_rows]
 
-            # Get reviews if designer
             reviews = []
             if user.role == UserAccount.INTERIOR_DESIGNER:
                 rev_rows = conn.execute(
@@ -273,7 +249,6 @@ class UserManagementController:
                 ).fetchall()
                 reviews = [dict(r) for r in rev_rows]
 
-            # Get shortlist count if customer
             shortlist_count = 0
             if user.role == UserAccount.CUSTOMER:
                 shortlist_count = conn.execute(
@@ -292,7 +267,6 @@ class UserManagementController:
             return None
 
     def update_user_status(self, user_id, new_status):
-        """Update a user's status (active/pending/suspended/deactivated)."""
         valid_statuses = ("active", "pending", "suspended", "deactivated")
         if new_status not in valid_statuses:
             self.errors.append(f"Invalid status: {new_status}")
@@ -335,10 +309,8 @@ class IDPQueueController:
         self.errors = []
 
     def get_pending_projects(self, page=1, per_page=20):
-        """Return paginated list of pending projects awaiting moderation."""
         conn = get_db()
         try:
-            # Total count
             total = conn.execute(
                 "SELECT COUNT(*) FROM project WHERE status = 'pending'"
             ).fetchone()[0]
@@ -374,10 +346,8 @@ class IDPQueueController:
             return {"projects": [], "total": 0, "page": 1, "per_page": per_page, "total_pages": 0}
 
     def get_project_detail(self, project_id):
-        """Get full detail of a pending project for review."""
         conn = get_db()
         try:
-            # Get project with designer info
             row = conn.execute(
                 """
                 SELECT p.*, u.name as designer_name, u.email as designer_email,
@@ -393,7 +363,6 @@ class IDPQueueController:
 
             project = dict(row)
 
-            # Get categories
             cat_rows = conn.execute(
                 """
                 SELECT c.category_id, c.name
@@ -405,7 +374,6 @@ class IDPQueueController:
             ).fetchall()
             project["categories"] = [dict(r) for r in cat_rows]
 
-            # Get photos
             photo_rows = conn.execute(
                 "SELECT photo_id, file_url, caption, uploaded_at FROM project_photo WHERE project_id = ?",
                 (project_id,)
@@ -419,7 +387,6 @@ class IDPQueueController:
             return None
 
     def approve_project(self, project_id):
-        """Approve a pending project (status -> active)."""
         conn = get_db()
         try:
             cursor = conn.execute(
@@ -434,7 +401,6 @@ class IDPQueueController:
             return False
 
     def reject_project(self, project_id):
-        """Reject a pending project (status -> rejected)."""
         conn = get_db()
         try:
             cursor = conn.execute(
@@ -469,21 +435,17 @@ class ReportsController:
         self.errors = []
 
     def _get_date_bounds(self, period_type, custom_start=None, custom_end=None):
-        """Return (start_date, end_date) strings for the given period type."""
         from datetime import datetime, timedelta
         now = datetime.now()
 
         if period_type == "daily":
-            # Yesterday by default
             target = now - timedelta(days=1)
             start = target.replace(hour=0, minute=0, second=0, microsecond=0)
             end = target.replace(hour=23, minute=59, second=59, microsecond=999999)
         elif period_type == "weekly":
-            # Last 7 days
             end = now.replace(hour=23, minute=59, second=59, microsecond=999999)
             start = (now - timedelta(days=7)).replace(hour=0, minute=0, second=0, microsecond=0)
         elif period_type == "monthly":
-            # Last 30 days
             end = now.replace(hour=23, minute=59, second=59, microsecond=999999)
             start = (now - timedelta(days=30)).replace(hour=0, minute=0, second=0, microsecond=0)
         elif period_type == "custom" and custom_start and custom_end:
@@ -496,54 +458,44 @@ class ReportsController:
         return start.isoformat(), end.isoformat()
 
     def generate_report(self, period_type, custom_start=None, custom_end=None):
-        """Generate a platform activity report for the given period."""
         conn = get_db()
         try:
             start, end = self._get_date_bounds(period_type, custom_start, custom_end)
             if start is None:
                 return None
 
-            # Projects created in period
             projects_created = conn.execute(
                 "SELECT COUNT(*) FROM project WHERE created_at BETWEEN ? AND ?", (start, end)
             ).fetchone()[0]
 
-            # Projects approved in period
             projects_approved = conn.execute(
                 "SELECT COUNT(*) FROM project WHERE status = 'active' AND updated_at BETWEEN ? AND ?", (start, end)
             ).fetchone()[0]
 
-            # Projects rejected in period
             projects_rejected = conn.execute(
                 "SELECT COUNT(*) FROM project WHERE status = 'rejected' AND updated_at BETWEEN ? AND ?", (start, end)
             ).fetchone()[0]
 
-            # Users registered in period
             users_registered = conn.execute(
                 "SELECT COUNT(*) FROM user_account WHERE created_at BETWEEN ? AND ?", (start, end)
             ).fetchone()[0]
 
-            # Designers registered in period
             designers_registered = conn.execute(
                 "SELECT COUNT(*) FROM user_account WHERE role = 'interior_designer' AND created_at BETWEEN ? AND ?", (start, end)
             ).fetchone()[0]
 
-            # Customers registered in period
             customers_registered = conn.execute(
                 "SELECT COUNT(*) FROM user_account WHERE role = 'customer' AND created_at BETWEEN ? AND ?", (start, end)
             ).fetchone()[0]
 
-            # Enquiries (project views as proxy for interest)
             total_views = conn.execute(
                 "SELECT COUNT(*) FROM project_view WHERE viewed_at BETWEEN ? AND ?", (start, end)
             ).fetchone()[0]
 
-            # Shortlists
             total_shortlists = conn.execute(
                 "SELECT COUNT(*) FROM project_shortlist_event WHERE action = 'add' AND event_at BETWEEN ? AND ?", (start, end)
             ).fetchone()[0]
 
-            # Enquiries - using project_view as proxy
             total_enquiries = total_views
 
             return ReportSummary(
@@ -564,19 +516,16 @@ class ReportsController:
             return None
 
     def get_daily_report(self, date=None):
-        """Generate daily report for a specific date (defaults to yesterday)."""
         if date:
             return self.generate_report("custom", custom_start=date, custom_end=date)
         return self.generate_report("daily")
 
     def get_weekly_report(self, start_date=None, end_date=None):
-        """Generate weekly report for the last 7 days or custom range."""
         if start_date and end_date:
             return self.generate_report("custom", custom_start=start_date, custom_end=end_date)
         return self.generate_report("weekly")
 
     def get_monthly_report(self, start_date=None, end_date=None):
-        """Generate monthly report for the last 30 days or custom range."""
         if start_date and end_date:
             return self.generate_report("custom", custom_start=start_date, custom_end=end_date)
         return self.generate_report("monthly")
@@ -603,7 +552,6 @@ class DesignerPerformanceController:
         self.errors = []
 
     def get_all_designers(self):
-        """Get all interior designers with their performance metrics."""
         conn = get_db()
         try:
             rows = conn.execute(
@@ -660,36 +608,30 @@ class DesignerPerformanceController:
             return []
 
     def get_designer_detail(self, designer_id):
-        """Get detailed performance for a specific designer."""
         conn = get_db()
         try:
-            # Get designer info
             user_row = conn.execute(
                 "SELECT * FROM user_account WHERE user_id = ? AND role = 'interior_designer'", (designer_id,)
             ).fetchone()
             if not user_row:
                 return None
 
-            # Company info
             company_row = conn.execute(
                 "SELECT * FROM company WHERE designer_id = ?", (designer_id,)
             ).fetchone()
 
-            # Projects
             proj_rows = conn.execute(
                 "SELECT project_id, title, status, created_at, updated_at FROM project WHERE designer_id = ? ORDER BY created_at DESC",
                 (designer_id,)
             ).fetchall()
             projects = [dict(r) for r in proj_rows]
 
-            # Reviews
             rev_rows = conn.execute(
                 "SELECT review_id, rating, comment, status, submitted_at FROM customer_review WHERE designer_id = ? ORDER BY submitted_at DESC",
                 (designer_id,)
             ).fetchall()
             reviews = [dict(r) for r in rev_rows]
 
-            # Views over time (last 30 days)
             view_rows = conn.execute(
                 """
                 SELECT date(viewed_at) as view_date, COUNT(*) as count
@@ -703,7 +645,6 @@ class DesignerPerformanceController:
             ).fetchall()
             views_over_time = [dict(r) for r in view_rows]
 
-            # Shortlists over time (last 30 days)
             sl_rows = conn.execute(
                 """
                 SELECT date(event_at) as event_date, COUNT(*) as count
@@ -735,10 +676,8 @@ class PlatformSettingsController:
         self.errors = []
 
     def get_settings(self):
-        """Get current platform settings (from a simple key-value store in a settings table)."""
         conn = get_db()
         try:
-            # Create settings table if not exists
             conn.execute("""
                 CREATE TABLE IF NOT EXISTS platform_settings (
                     key TEXT PRIMARY KEY,
@@ -757,7 +696,6 @@ class PlatformSettingsController:
             return {}
 
     def get_default_settings(self):
-        """Return default settings structure."""
         return {
             "site_name": {"value": "IDEAL Platform", "description": "Platform display name"},
             "site_description": {"value": "Interior Design Project Platform", "description": "Platform tagline/description"},
@@ -770,7 +708,6 @@ class PlatformSettingsController:
         }
 
     def update_settings(self, form_data):
-        """Update platform settings from form data."""
         conn = get_db()
         try:
             defaults = self.get_default_settings()
@@ -779,7 +716,6 @@ class PlatformSettingsController:
             for key, info in defaults.items():
                 if key in form_data:
                     new_value = form_data[key].strip()
-                    # For checkboxes, handle boolean
                     if key in ("enable_notifications", "maintenance_mode", "allow_new_registrations"):
                         new_value = "true" if form_data.get(key) else "false"
 

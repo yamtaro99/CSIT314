@@ -15,7 +15,6 @@ def login():
         if account is None:
             flash(controller.error, "error")
         else:
-            # Update last_login timestamp
             from app.db import get_db, now
             get_db().execute(
                 "UPDATE user_account SET last_login = ? WHERE user_id = ?",

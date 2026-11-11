@@ -6,7 +6,6 @@ from app import db
 
 
 def create_app(test_config=None):
-    # Locate the repository root relative to this file
     BASE_DIR = os.path.abspath(
         os.path.join(os.path.dirname(__file__), "..")
     )

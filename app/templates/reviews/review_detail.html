@@ -7,7 +7,6 @@
 <div class="card narrow" style="max-width: 600px;">
   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
     <h1>Client Review Details</h1>
-    <!-- Visual Status Badge -->
     <span class="pill {{ 'success' if review.status == 'approved' else ('danger' if review.status == 'rejected' else 'warning') }}" 
           style="text-transform: uppercase; font-weight: bold; font-size: 0.85rem;">
       {{ review.status }}

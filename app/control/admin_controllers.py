@@ -3,7 +3,6 @@ from app.entity.company import Company
 
 
 def _find_pending(user_id):
-    """Return the designer if they exist and are still pending, else None."""
     designer = InteriorDesigner.find_by_id(user_id)
     if designer is None or designer.status != "pending":
         return None

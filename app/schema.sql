@@ -110,7 +110,6 @@ CREATE TABLE project_report (
 );
 
 -- Project Interest Tracking (US03 / US07)
--- Current favourites are independent of historical shortlist events.
 CREATE TABLE project_shortlist (
     customer_id INTEGER NOT NULL REFERENCES user_account(user_id),
     project_id INTEGER NOT NULL REFERENCES project(project_id),

@@ -26,7 +26,6 @@ class PlatformMgmtPage:
         self.designer_perf_ctrl = DesignerPerformanceController()
         self.settings_ctrl = PlatformSettingsController()
 
-    # ---------- Dashboard ----------
     def dashboard(self):
         metrics = self.dashboard_ctrl.get_metrics()
         if self.dashboard_ctrl.errors:
@@ -34,7 +33,6 @@ class PlatformMgmtPage:
                 flash(err, "error")
         return render_template("platform_mgmt/dashboard.html", metrics=metrics)
 
-    # ---------- Categories ----------
     def categories(self):
         cats = self.category_ctrl.get_all_categories()
         return render_template("platform_mgmt/categories.html", categories=cats)
@@ -44,7 +42,6 @@ class PlatformMgmtPage:
             return render_template("platform_mgmt/category_form.html", category=None, action="Create")
 
         name = request.form.get("name", "").strip()
-        # Pass raw value; controller handles checkbox parsing ("on"/"1"/"true" -> True)
         is_active = request.form.get("is_active")
 
         cat = self.category_ctrl.create_category(name, is_active)
@@ -60,7 +57,6 @@ class PlatformMgmtPage:
 
     def edit_category(self, category_id):
         if request.method == "GET":
-            # Fetch category for pre-filling form
             conn = __import__("app.db", fromlist=["get_db"]).get_db()
             row = conn.execute("SELECT * FROM category WHERE category_id = ?", (category_id,)).fetchone()
             if not row:
@@ -70,7 +66,6 @@ class PlatformMgmtPage:
             return render_template("platform_mgmt/category_form.html", category=cat, action="Edit")
 
         name = request.form.get("name", "").strip()
-        # Pass raw value; controller handles checkbox parsing
         is_active = request.form.get("is_active")
 
         if self.category_ctrl.update_category(category_id, name, is_active):
@@ -103,9 +98,7 @@ class PlatformMgmtPage:
                 flash(err, "error")
         return redirect(url_for("platform_mgmt.categories"))
 
-    # ---------- User Management ----------
     def users(self):
-        # Get filter params
         role_filter = request.args.get("role") or None
         status_filter = request.args.get("status") or None
         search = request.args.get("search") or None
@@ -139,7 +132,6 @@ class PlatformMgmtPage:
                     flash(err, "error")
         return redirect(url_for("platform_mgmt.user_detail", user_id=user_id))
 
-    # ---------- IDP Queue ----------
     def idp_queue(self):
         page = max(1, int(request.args.get("page", 1)))
         result = self.idp_ctrl.get_pending_projects(page)
@@ -172,13 +164,10 @@ class PlatformMgmtPage:
                     flash(err, "error")
         return redirect(url_for("platform_mgmt.idp_queue"))
 
-    # ---------- Reports ----------
     def reports(self):
-        """Display reports landing page with links to daily/weekly/monthly."""
         return render_template("platform_mgmt/reports.html")
 
     def daily_report(self):
-        # Get date from query param (defaults to yesterday)
         date = request.args.get("date")
         report = self.reports_ctrl.get_daily_report(date)
         if self.reports_ctrl.errors:
@@ -192,7 +181,6 @@ class PlatformMgmtPage:
         )
 
     def weekly_report(self):
-        # Get date range from query params
         start_date = request.args.get("start_date")
         end_date = request.args.get("end_date")
         report = self.reports_ctrl.get_weekly_report(start_date, end_date)
@@ -208,7 +196,6 @@ class PlatformMgmtPage:
         )
 
     def monthly_report(self):
-        # Get date range from query params
         start_date = request.args.get("start_date")
         end_date = request.args.get("end_date")
         report = self.reports_ctrl.get_monthly_report(start_date, end_date)
@@ -223,7 +210,6 @@ class PlatformMgmtPage:
             default_end=end_date,
         )
 
-    # ---------- Designer Performance ----------
     def designer_performance(self):
         designers = self.designer_perf_ctrl.get_all_designers()
         if self.designer_perf_ctrl.errors:
@@ -244,12 +230,10 @@ class PlatformMgmtPage:
             **detail,
         )
 
-    # ---------- Platform Settings ----------
     def platform_settings(self):
         if request.method == "GET":
             settings = self.settings_ctrl.get_settings()
             defaults = self.settings_ctrl.get_default_settings()
-            # Merge defaults with saved settings
             for key, info in defaults.items():
                 if key not in settings:
                     settings[key] = info
@@ -258,7 +242,6 @@ class PlatformMgmtPage:
                 settings=settings,
             )
 
-        # POST - save settings
         updated = self.settings_ctrl.update_settings(request.form)
         if self.settings_ctrl.errors:
             for err in self.settings_ctrl.errors:

@@ -47,10 +47,9 @@ def test_customer_detail_visit_records_a_view(client, project):
 
 def test_weekly_graph_groups_views_and_adds_by_calendar_week(designer, project):
     customer = make_user(UserAccount.CUSTOMER, "view@test.local")
-    # 10 Nov 2026 is Tuesday; week starts Monday 9 Nov.
-    _write_view(customer.user_id, project.project_id, "2026-11-01T12:00:00")  # last Sunday
-    _write_view(customer.user_id, project.project_id, "2026-11-02T12:00:00")  # Monday
-    _write_view(customer.user_id, project.project_id, "2026-11-09T10:00:00")  # current Monday
+    _write_view(customer.user_id, project.project_id, "2026-11-01T12:00:00")
+    _write_view(customer.user_id, project.project_id, "2026-11-02T12:00:00")
+    _write_view(customer.user_id, project.project_id, "2026-11-09T10:00:00")
     _write_add(customer.user_id, project.project_id, "2026-11-02T12:00:00")
     _write_add(customer.user_id, project.project_id, "2026-11-09T12:00:00")
     trend = ViewWeeklyInterestTrendsController().get_trends(

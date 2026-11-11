@@ -29,7 +29,6 @@ class InteriorDesigner(UserAccount):
         return [cls._from_row(row) for row in rows]
 
     def setAvailability(self, date, start_time, end_time):
-        """Creates and saves a consultation slot for this interior designer[cite: 2]."""
         from app.entity.consultation_slot import ConsultationSlot
         slot = ConsultationSlot(
             slotId=None,

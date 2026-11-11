@@ -6,7 +6,6 @@
   <h1>Set Consultation Available Times</h1>
 </div>
 
-<!-- Form Card -->
 <div class="card" style="margin-bottom: 30px;">
   <h2>Add New Time Slot</h2>
   <form method="post" action="{{ url_for('consultation.set_availability') }}">
@@ -26,7 +25,6 @@
   </form>
 </div>
 
-<!-- Current Slots Table -->
 <h2>Current Availability Slots</h2>
 {% if slots %}
   <table class="list">

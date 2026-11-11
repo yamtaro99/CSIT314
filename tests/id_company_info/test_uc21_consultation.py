@@ -10,10 +10,8 @@ from tests.conftest import login, make_user
 
 TOMORROW = (date.today() + timedelta(days=1)).isoformat()
 YESTERDAY = (date.today() - timedelta(days=1)).isoformat()
-FIXED_DAY = "2030-06-15"  # far enough ahead that the future check always passes
+FIXED_DAY = "2030-06-15"
 
-
-# ---------- local helpers (DB reads/inserts for slot setup) ----------
 
 def insert_slot(app, designer_id, date_str, start, end, is_booked=0):
     with app.app_context():
@@ -50,10 +48,7 @@ def designer_client(client, designer):
     return client
 
 
-# ---------- Controller: SetAvailabilityController.set_availability ----------
-
 class TestSetAvailabilityController:
-
     def _run(self, app, designer_id, date_str, start, duration=1):
         with app.app_context():
             d = InteriorDesigner.find_by_id(designer_id)
@@ -139,10 +134,7 @@ class TestSetAvailabilityController:
         assert fetch_slots(app, designer.user_id) == []
 
 
-# ---------- Route: POST /consultation/availability/add ----------
-
 class TestAddSlotRoute:
-
     def test_designer_adds_slot_and_sees_success_message(self, designer_client, app, designer):
         response = post_add(designer_client, FIXED_DAY, "10:00", "1")
 
@@ -188,10 +180,7 @@ class TestAddSlotRoute:
         assert b"No availability slots" not in response.data
 
 
-# ---------- Route: POST /consultation/availability/<slot_id>/delete ----------
-
 class TestDeleteSlotRoute:
-
     def test_open_slot_is_removed_and_calendar_refreshed(self, designer_client, app, designer):
         slot_id = insert_slot(app, designer.user_id, FIXED_DAY, "10:00", "11:00")
 
@@ -240,10 +229,7 @@ class TestDeleteSlotRoute:
         assert len(fetch_slots(app, designer.user_id)) == 1
 
 
-# ---------- Access control ----------
-
 class TestAccessControl:
-
     def test_anonymous_user_is_redirected_to_login(self, client):
         response = client.get("/consultation/availability")
 

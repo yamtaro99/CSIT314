@@ -155,7 +155,6 @@ def seed_customer_reviews(conn):
             "pending",
             rand_dt(5)
         ))
-        # Add an approved review
         reviews.append((
             designer_id,
             RNG.choice(customers),

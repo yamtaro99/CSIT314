@@ -19,7 +19,6 @@ def display_error(msg):
 @bp.route("/availability", methods=["GET"])
 @designer_only
 def view_calendar():
-    """Steps 1 & 2: ID opens calendar and views current slots[cite: 1]."""
     controller = SetAvailabilityController()
     slots = controller.get_availability_calendar(g.user.user_id)
     return render_template("consultation/calendar.html", slots=slots)
@@ -32,7 +31,6 @@ def set_availability():
     start_time = request.form.get("start_time")
     duration = request.form.get("duration", 1)
 
-    # Fetch as an InteriorDesigner instance
     designer = InteriorDesigner.find_by_id(g.user.user_id)
 
     controller = SetAvailabilityController()

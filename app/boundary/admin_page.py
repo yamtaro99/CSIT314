@@ -11,7 +11,6 @@ admin_only = login_required(UserAccount.USER_ADMIN)
 
 
 class ApplicationReviewPage:
-    
     def view_id_applications(self):
         applications = ViewApplicationController().get_pending_application()
         return self.display_application(applications)

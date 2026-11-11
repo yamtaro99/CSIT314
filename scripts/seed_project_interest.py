@@ -56,7 +56,6 @@ def backfill_existing_shortlists(conn):
 
 
 def seed_demo_interest(conn, today=None):
-
     ensure_interest_tables(conn)
     migrated = backfill_existing_shortlists(conn)
     now = datetime.now()
@@ -78,17 +77,14 @@ def seed_demo_interest(conn, today=None):
                 "historical_favourites_migrated": migrated}
 
     views_added = events_added = favourites_added = 0
-    # Not all weeks rise uniformly: realistic fluctuations with an overall pattern.
     view_pattern = [6, 8, 12, 9, 15, 13, 19, 14]
     shortlist_pattern = [1, 1, 2, 1, 3, 2, 4, 3]
     for project_id in project_ids:
         rng = random.Random(31403 + project_id)
-        # Stable distinct customers per project, so a single favourite is not counted twice.
         candidates = rng.sample(customer_ids, min(30, len(customer_ids)))
         next_candidate = 0
         for week_idx in range(8):
             week_monday = first_monday + timedelta(weeks=week_idx)
-            # A stable timestamp within the relevant calendar week.
             def timestamp_for(event_index):
                 max_day = today.weekday() if week_idx == 7 else 6
                 event_day = rng.randint(0, max_day)
@@ -116,10 +112,7 @@ def seed_demo_interest(conn, today=None):
                     break
                 customer_id = candidates[next_candidate]
                 next_candidate += 1
-                # Always advance the seeded RNG identically on reruns.
                 timestamp = timestamp_for(event_idx)
-                # Do not invent a second add while this customer already has
-                # an active favourite (e.g., left over from the older patch).
                 already_saved = conn.execute(
                     "SELECT 1 FROM project_shortlist WHERE customer_id = ? AND project_id = ?",
                     (customer_id, project_id),

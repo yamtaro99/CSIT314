@@ -5,7 +5,6 @@
   <h1>User Management</h1>
 </div>
 
-<!-- Filters -->
 <div class="card filters">
   <form method="get" class="filter-form">
     <div class="filter-row">
@@ -39,7 +38,6 @@
   </form>
 </div>
 
-<!-- Users Table -->
 <div class="card">
   {% if users %}
   <div class="table-responsive">
@@ -75,7 +73,6 @@
     </table>
   </div>
 
-  <!-- Pagination -->
   {% if pagination.total_pages > 1 %}
   <nav class="pagination">
     {% if pagination.page > 1 %}

@@ -17,7 +17,6 @@ class WeeklyChart:
         self.max_value = max([1, *self.values])
         self.axis_top = max(4, self.max_value)
         self.total = sum(self.values)
-        # Canvas 760x260. Use a 45px left margin and 25px right margin.
         self.points = []
         for index, week in enumerate(weeks):
             x = round(54 + index * 680 / max(len(weeks) - 1, 1), 1)

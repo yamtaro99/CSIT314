@@ -16,13 +16,12 @@ class CustomerReview:
         self.reviewId = reviewId
         self.rating = rating
         self.comment = comment
-        self.status = status  # 'pending', 'approved', 'rejected'
+        self.status = status
         self.submittedAt = submittedAt
         self.designer_id = designer_id
         self.customer_id = customer_id
 
     def set_status(self, new_status):
-        """Updates the review status ('approved' or 'rejected')."""
         conn = get_db()
         conn.execute(
             "UPDATE customer_review SET status = ? WHERE review_id = ?",
@@ -62,7 +61,6 @@ class CustomerReview:
 
     @classmethod
     def find_approved(cls):
-        """Fetches approved reviews, newest first, with the designer's name attached."""
         rows = get_db().execute(
             "SELECT r.*, u.name AS designer_name "
             "FROM customer_review r "

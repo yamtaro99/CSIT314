@@ -7,7 +7,6 @@
 </div>
 
 <div class="detail-grid">
-  <!-- Project Info -->
   <section class="card">
     <h2>Project Details</h2>
     <dl>
@@ -26,13 +25,11 @@
     </dl>
   </section>
 
-  <!-- Description -->
   <section class="card full-width">
     <h2>Description</h2>
     <div class="prose">{{ project.description }}</div>
   </section>
 
-  <!-- Categories -->
   {% if project.categories %}
   <section class="card">
     <h2>Categories ({{ project.categories|length }})</h2>
@@ -44,7 +41,6 @@
   </section>
   {% endif %}
 
-  <!-- Photos -->
   {% if project.photos %}
   <section class="card">
     <h2>Photos ({{ project.photos|length }})</h2>
@@ -62,7 +58,6 @@
   {% endif %}
 </div>
 
-<!-- Actions -->
 <section class="card actions-bar">
   <form method="post" action="{{ url_for('platform_mgmt.idp_approve', project_id=project.project_id) }}" style="display:inline;">
     <button type="submit" class="button success" onclick="return confirm('Approve this project? This will publish it to the platform.')">

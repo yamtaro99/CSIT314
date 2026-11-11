@@ -17,17 +17,14 @@ class SetAvailabilityController:
             start_time_obj = datetime.strptime(start_time_str, "%H:%M").time()
             
             slot_start_dt = datetime.combine(date_obj, start_time_obj)
-            # Automatically calculate end time based on selected duration (e.g., 1 or 2 hours)
             slot_end_dt = slot_start_dt + timedelta(hours=int(duration_hours))
             
             end_time_str = slot_end_dt.strftime("%H:%M")
             now = datetime.now()
 
-            # Future validation check
             if slot_start_dt <= now:
                 self.errors.append("The slot start time must be in the future.")
 
-            # Overlap check against existing slots
             existing_slots = ConsultationSlot.get_slots_by_designer(designer.user_id)
             for s in existing_slots:
                 if str(s.date) == date_str:

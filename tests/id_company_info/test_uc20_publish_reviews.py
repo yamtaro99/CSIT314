@@ -7,8 +7,6 @@ from app.entity.user_account import UserAccount
 from tests.conftest import login, make_user
 
 
-# ---------- local helpers (review setup and DB reads) ----------
-
 def insert_review(app, designer_id, comment, status="pending", rating=5,
                   submitted_at="2026-11-08T14:18:36"):
     with app.app_context():
@@ -36,10 +34,7 @@ def designer_client(client, designer):
     return client
 
 
-# ---------- Entity: CustomerReview ----------
-
 class TestCustomerReviewEntity:
-
     def test_find_pending_returns_only_this_designers_pending_reviews(self, app, designer, other_designer):
         insert_review(app, designer.user_id, "Mine, pending", status="pending")
         insert_review(app, designer.user_id, "Mine, approved", status="approved")
@@ -78,10 +73,7 @@ class TestCustomerReviewEntity:
             assert [r.comment for r in CustomerReview.find_approved()] == ["Newer", "Older"]
 
 
-# ---------- Control: ReviewController ----------
-
 class TestReviewController:
-
     def test_approve_sets_status_to_approved(self, app, designer):
         review_id = insert_review(app, designer.user_id, "Good work")
 
@@ -119,10 +111,7 @@ class TestReviewController:
             assert [r.comment for r in reviews] == ["Pending one"]
 
 
-# ---------- Route: designer's pending list and detail ----------
-
 class TestDesignerReviewPages:
-
     def test_pending_list_shows_this_designers_pending_reviews(self, designer_client, app, designer, other_designer):
         insert_review(app, designer.user_id, "Mine to review")
         insert_review(app, other_designer.user_id, "Not mine")
@@ -155,10 +144,7 @@ class TestDesignerReviewPages:
         assert b"The review can no longer be loaded or does not exist." in response.data
 
 
-# ---------- Route: approve and reject ----------
-
 class TestApproveRejectRoutes:
-
     def test_approve_publishes_review_and_returns_to_pending_list(self, designer_client, app, designer):
         review_id = insert_review(app, designer.user_id, "Publish me")
 
@@ -166,7 +152,7 @@ class TestApproveRejectRoutes:
 
         assert b"Review approved and published successfully." in response.data
         assert review_status(app, review_id) == "approved"
-        assert b"Publish me" not in response.data  # cleared from the pending list
+        assert b"Publish me" not in response.data
 
     def test_reject_keeps_review_hidden(self, designer_client, app, designer):
         review_id = insert_review(app, designer.user_id, "Reject me")
@@ -185,7 +171,6 @@ class TestApproveRejectRoutes:
     def test_review_stays_pending_if_it_cannot_be_loaded(self, designer_client, app, designer):
         review_id = insert_review(app, designer.user_id, "Still here")
 
-        # Exception 3a: the review can't be loaded, so nothing changes
         designer_client.post("/reviews/9999/approve")
 
         assert review_status(app, review_id) == "pending"
@@ -207,10 +192,7 @@ class TestApproveRejectRoutes:
         assert review_status(app, review_id) == "pending"
 
 
-# ---------- Public page: what visitors see ----------
-
 class TestPublicApprovedReviewsPage:
-
     def test_visitor_does_not_need_to_log_in(self, client):
         response = client.get("/reviews/approved")
 
@@ -250,10 +232,7 @@ class TestPublicApprovedReviewsPage:
         assert b"No client reviews have been published yet." in response.data
 
 
-# ---------- Access control ----------
-
 class TestAccessControl:
-
     def test_anonymous_user_is_redirected_from_pending_list(self, client):
         response = client.get("/reviews/pending")
 
@@ -283,10 +262,7 @@ class TestAccessControl:
         assert review_status(app, review_id) == "pending"
 
 
-# ---------- Ownership: a designer can only open their own reviews ----------
-
 class TestOwnership:
-
     def test_detail_page_for_another_designers_review_is_refused(self, designer_client, app, other_designer):
         review_id = insert_review(app, other_designer.user_id, "Not yours")
 

@@ -48,7 +48,6 @@ class TestCategoryController:
         names = {c.name for c in cats}
         assert "Active Cat" in names
         assert "Inactive Cat" in names
-        # Inactive should come after active (ORDER BY is_active DESC)
         active_first = [c for c in cats if c.is_active]
         inactive_first = [c for c in cats if not c.is_active]
         assert len(active_first) > 0
@@ -66,7 +65,6 @@ class TestCategoryController:
         ctrl = CategoryController()
         cat = ctrl.create_category("Original Name")
         assert ctrl.update_category(cat.category_id, "Updated Name", False)
-        # Verify
         conn = __import__("app.db", fromlist=["get_db"]).get_db()
         row = conn.execute("SELECT * FROM category WHERE category_id = ?", (cat.category_id,)).fetchone()
         assert row["name"] == "Updated Name"
@@ -90,17 +88,14 @@ class TestCategoryController:
         cat = ctrl.create_category("Unused Category")
         result = ctrl.delete_category(cat.category_id)
         assert result == "deleted"
-        # Verify gone
         conn = __import__("app.db", fromlist=["get_db"]).get_db()
         row = conn.execute("SELECT * FROM category WHERE category_id = ?", (cat.category_id,)).fetchone()
         assert row is None
 
     def test_delete_category_in_use_soft_deletes(self, app):
-        # Need a designer and project using the category
         designer = make_user(UserAccount.INTERIOR_DESIGNER, "designer@test.local")
         ctrl = CategoryController()
         cat = ctrl.create_category("Used Category")
-        # Create project with this category
         from app.entity.project import Project
         proj = Project(designer.user_id, "Test Project", "Desc", "Location", "2025-12-31")
         proj.create()
@@ -108,10 +103,8 @@ class TestCategoryController:
         conn.execute("INSERT INTO project_category (project_id, category_id) VALUES (?, ?)",
                      (proj.project_id, cat.category_id))
         conn.commit()
-        # Now delete
         result = ctrl.delete_category(cat.category_id)
         assert result == "deactivated"
-        # Verify inactive
         row = conn.execute("SELECT * FROM category WHERE category_id = ?", (cat.category_id,)).fetchone()
         assert row["is_active"] == 0
 
@@ -186,7 +179,6 @@ class TestPlatformMgmtAccessControl:
         assert resp.status_code == 200
         assert b"Category" in resp.data
         assert b"created successfully" in resp.data
-        # Verify in DB
         conn = __import__("app.db", fromlist=["get_db"]).get_db()
         row = conn.execute("SELECT * FROM category WHERE name = ?", ("New Test Category",)).fetchone()
         assert row is not None
@@ -195,18 +187,15 @@ class TestPlatformMgmtAccessControl:
     def test_platform_manager_can_edit_category(self, client, app):
         pm = make_user(UserAccount.PLATFORM_MANAGER, "pm@test.local")
         login(client, pm.email)
-        # Create first
         client.post("/platform/categories/create", data={"name": "To Edit", "is_active": "1"})
         conn = __import__("app.db", fromlist=["get_db"]).get_db()
         cat = conn.execute("SELECT * FROM category WHERE name = ?", ("To Edit",)).fetchone()
-        # Edit
         resp = client.post(f"/platform/categories/{cat['category_id']}/edit", data={
             "name": "Edited Name",
             "is_active": "0"
         }, follow_redirects=True)
         assert resp.status_code == 200
         assert b"updated successfully" in resp.data
-        # Verify
         row = conn.execute("SELECT * FROM category WHERE category_id = ?", (cat["category_id"],)).fetchone()
         assert row["name"] == "Edited Name"
         assert row["is_active"] == 0
